@@ -1,5 +1,5 @@
-import 'package:autoricksaw/autoricksaw_home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:autoricksaw/role_selection_page.dart';
 
 void main() {
   runApp(
@@ -27,6 +27,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: AutoricksawHomePage());
+    return MaterialApp(
+      title: 'Autorickshaw Registration',
+      theme: ThemeData(
+        primarySwatch: Colors.deepPurple,
+        inputDecorationTheme: const InputDecorationTheme(
+          border: OutlineInputBorder(),
+        ),
+      ),
+      home: const RoleSelectionPage(),
+      debugShowCheckedModeBanner: false,
+    );
   }
 }
