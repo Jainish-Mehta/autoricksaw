@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Autorickshaw Registration',
       theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
+        //primarySwatch: Colors.deepOrange,
         inputDecorationTheme: const InputDecorationTheme(
           border: OutlineInputBorder(),
         ),
