@@ -1,4 +1,4 @@
-import 'package:autoricksaw/driver_registration.dart';
+import 'package:autoricksaw/role_selection_page.dart';
 import 'package:flutter/material.dart';
 
 class DriverHomePage extends StatelessWidget {
@@ -26,7 +26,7 @@ class DriverHomePage extends StatelessWidget {
                     ),
                     SizedBox(width: 12),
                     Text(
-                      'Driver Details',
+                      'Driver Name',
                       style: TextStyle(color: Colors.white, fontSize: 24),
                     ),
                   ],
@@ -68,7 +68,7 @@ class DriverHomePage extends StatelessWidget {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => DriverRegistrationPage(),
+                    builder: (_) => RoleSelectionPage(),
                   ),
                 );
               },

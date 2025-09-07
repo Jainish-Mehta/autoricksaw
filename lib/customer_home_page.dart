@@ -1,4 +1,4 @@
-import 'package:autoricksaw/customer_registration.dart';
+import 'package:autoricksaw/role_selection_page.dart';
 import 'package:flutter/material.dart';
 
 class CustomerHomePage extends StatelessWidget {
@@ -28,7 +28,7 @@ class CustomerHomePage extends StatelessWidget {
                       width: 12,
                     ),
                     Text(
-                      'Customer Details',
+                      'Customer Name',
                       style: TextStyle(color: Colors.white, fontSize: 24),
                     )
                   ],
@@ -68,7 +68,7 @@ class CustomerHomePage extends StatelessWidget {
               onTap: () {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (_) => CustomerRegistrationPage()),
+                  MaterialPageRoute(builder: (_) => RoleSelectionPage()),
                   (route) => false,
                 );
               },
