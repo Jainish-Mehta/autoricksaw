@@ -1,10 +1,16 @@
+import 'package:autoricksaw/login_page.dart';
 import 'package:flutter/material.dart';
-import 'package:autoricksaw/role_selection_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:autoricksaw/customer_home_page.dart';
+import 'package:autoricksaw/driver_home_page.dart';
 
-void main() {
-  runApp(
-    const MyApp(),
-  ); //const is used bcoz we don't need to recreate widget or constructor every time
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+  String? userType = prefs.getString('userType');
+
+  runApp(MyApp(isLoggedIn: isLoggedIn, userType: userType));
 }
 
 // StatelessWidget: Immutable, ideal for static UI
@@ -17,25 +23,41 @@ void main() {
  2.Cupertino Design provided by Apple for IOS
   */
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isLoggedIn;
+  final String? userType;
+
+  const MyApp({super.key, required this.isLoggedIn, this.userType});
 
   // MaterialApp is a widget wraps your entire app and sets up the Material Design environment.
   // Think of it as the entry point that wires up theming, navigation, and localization.
 
-  //Scaffold is a widget provides the basic visual structure for each screen.
-  //It’s what gives you the app bar, drawer, floating action button, and body content.
+  // Scaffold is a widget provides the basic visual structure for each screen.
+  // It’s what gives you the app bar, drawer, floating action button, and body content.
 
   @override
   Widget build(BuildContext context) {
+    Widget initialScreen;
+
+    if (isLoggedIn) {
+      if (userType == 'customer') {
+        initialScreen = CustomerHomePage();
+      } else if (userType == 'driver') {
+        initialScreen = DriverHomePage();
+      } else {
+        initialScreen = LoginPage(); // fallback
+      }
+    } else {
+      initialScreen = LoginPage();
+    }
+
     return MaterialApp(
       title: 'Autorickshaw Registration',
       theme: ThemeData(
-        //primarySwatch: Colors.deepOrange,
         inputDecorationTheme: const InputDecorationTheme(
           border: OutlineInputBorder(),
         ),
       ),
-      home: const RoleSelectionPage(),
+      home: initialScreen,
       debugShowCheckedModeBanner: false,
     );
   }
