@@ -1,3 +1,4 @@
+import 'package:autoricksaw/exit_pop_up.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:autoricksaw/customer_home_page.dart';
@@ -21,155 +22,166 @@ class _LoginPageState extends State<LoginPage> {
     selectedRole = widget.selectedRole ?? 'customer';
   }
 
-  final String customerLoginID = 'customer@gmail.com';
-  final String driverLoginID = 'driver@gmail.com';
-  final String password = '12341234';
+  final String customerLoginID = '';
+  final String driverLoginID = '';
+  final String password = '';
 
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Select Account Type',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.deepPurple,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        await handlePopResult(context, didPop, result);
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Select Account Type',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
-            ),
-            const SizedBox(height: 32),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildRoleCard(
-                  role: 'customer',
-                  icon: Icons.person,
-                  label: 'Customer',
-                ),
-                const SizedBox(width: 32),
-                _buildRoleCard(
-                  role: 'driver',
-                  icon: Icons.local_taxi,
-                  label: 'Driver',
-                ),
-              ],
-            ),
-            const SizedBox(height: 32),
-            Padding(
-              padding: EdgeInsets.all(12),
-              child: Column(
+              const SizedBox(height: 32),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextField(
-                    controller: _controllerEmail,
-                    decoration: InputDecoration(
-                      label: Text(
-                        'Email',
-                        style: TextStyle(color: Colors.deepPurple),
-                      ),
-                      prefixIcon: Icon(Icons.email, color: Colors.deepPurple),
-                    ),
+                  _buildRoleCard(
+                    role: 'customer',
+                    icon: Icons.person,
+                    label: 'Customer',
                   ),
-                  SizedBox(height: 5),
-                  TextField(
-                    controller: _controllerPassword,
-                    decoration: InputDecoration(
-                      label: Text(
-                        'Password',
-                        style: TextStyle(
-                          color: Colors.deepPurple,
-                          fontWeight: FontWeight.w500,
-                          backgroundColor: Colors.white,
-                          fontSize: 20,
-                        ),
-                      ),
-                      prefixIcon: Icon(Icons.lock, color: Colors.deepPurple),
-                    ),
-                    obscureText: true,
-                  ),
-                  const SizedBox(height: 32),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Text('No Account?'),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => RegistrationPage()),
-                              );
-                            },
-                            child: const Text(
-                              ' Signup',
-                              style: TextStyle(
-                                color: Colors.deepPurple,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      ElevatedButton(
-                        onPressed: () async {
-                          final email = _controllerEmail.text;
-                          final pass = _controllerPassword.text;
-
-                          if ((selectedRole == 'customer' &&
-                                  email == customerLoginID &&
-                                  pass == password) ||
-                              (selectedRole == 'driver' &&
-                                  email == driverLoginID &&
-                                  pass == password)) {
-                            final prefs = await SharedPreferences.getInstance();
-                            await prefs.setBool('isLoggedIn', true);
-                            await prefs.setString('userType', selectedRole);
-
-                            if (!mounted) return;
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => selectedRole == 'customer'
-                                    ? CustomerHomePage()
-                                    : DriverHomePage(),
-                              ),
-                            );
-                          } else {
-                            if (!mounted) return;
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Invalid credentials'),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepPurple,
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 32,
-                            vertical: 12,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(0),
-                          ),
-                        ),
-                        child: Text('Login'),
-                      ),
-                    ],
+                  const SizedBox(width: 32),
+                  _buildRoleCard(
+                    role: 'driver',
+                    icon: Icons.local_taxi,
+                    label: 'Driver',
                   ),
                 ],
               ),
-            ),
-          ],
+              const SizedBox(height: 32),
+              Padding(
+                padding: EdgeInsets.all(12),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: _controllerEmail,
+                      decoration: InputDecoration(
+                        label: Text(
+                          'Email',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        prefixIcon: Icon(Icons.email, color: Colors.black),
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    TextField(
+                      controller: _controllerPassword,
+                      decoration: InputDecoration(
+                        label: Text(
+                          'Password',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                            backgroundColor: Colors.white,
+                            fontSize: 20,
+                          ),
+                        ),
+                        prefixIcon: Icon(Icons.lock, color: Colors.black),
+                      ),
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: 32),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Text('No Account?'),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => RegistrationPage()),
+                                );
+                              },
+                              child: const Text(
+                                ' Signup',
+                                style: TextStyle(
+                                  color: Colors.yellow,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            final email = _controllerEmail.text;
+                            final pass = _controllerPassword.text;
+
+                            if ((selectedRole == 'customer' &&
+                                    email == customerLoginID &&
+                                    pass == password) ||
+                                (selectedRole == 'driver' &&
+                                    email == driverLoginID &&
+                                    pass == password)) {
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.setBool('isLoggedIn', true);
+                              await prefs.setString('userType', selectedRole);
+
+                              if (!context.mounted) return;
+                              Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                  builder: (_) => selectedRole == 'customer'
+                                      ? CustomerHomePage()
+                                      : DriverHomePage(),
+                                ),
+                                (Route<dynamic> route) => false,
+                              );
+                            } else {
+                              if (!mounted) return;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Invalid credentials'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.yellow,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 32,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(0),
+                            ),
+                          ),
+                          child: Text(
+                            'Login',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -191,10 +203,10 @@ class _LoginPageState extends State<LoginPage> {
         width: 120,
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.deepPurple : Colors.grey.shade200,
+          color: isSelected ? Colors.yellow : Colors.grey.shade200,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? Colors.deepPurple : Colors.grey,
+            color: isSelected ? Colors.yellow : Colors.grey,
             width: 2,
           ),
         ),

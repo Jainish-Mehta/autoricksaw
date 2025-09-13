@@ -18,17 +18,17 @@ class _RegistrationPage extends State<RegistrationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.yellow,
       body: Center(
         child: SizedBox(
           height: 600,
           width: 400,
           child: DecoratedBox(
             decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 225, 210, 255),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
                 gradient: LinearGradient(
-                    colors: [Colors.deepPurple, Colors.deepPurpleAccent],
+                    colors: [Colors.yellowAccent, Colors.greenAccent],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight)),
             child: Column(
@@ -45,7 +45,7 @@ class _RegistrationPage extends State<RegistrationPage> {
                       Text(
                         'Create Account',
                         style: TextStyle(
-                          color: Colors.deepPurple,
+                          color: Colors.black,
                           fontSize: 42,
                           fontWeight: FontWeight.w500,
                         ),
@@ -56,25 +56,25 @@ class _RegistrationPage extends State<RegistrationPage> {
                         decoration: InputDecoration(
                           labelText: 'Email',
                           labelStyle: TextStyle(
-                              color: Colors.deepPurple,
+                              color: Colors.black,
                               fontSize: 18,
                               fontWeight: FontWeight.w500),
                           border: UnderlineInputBorder(),
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
-                              color: Colors.deepPurple,
+                              color: Colors.black,
                               width: 2,
                             ),
                           ),
                           hintText: 'Enter your email',
                           hintStyle: TextStyle(
-                              color: Colors.deepPurple,
+                              color: Colors.black,
                               fontSize: 20,
                               fontWeight: FontWeight.w500),
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                           prefixIcon: Icon(
                             Icons.mail,
-                            color: Colors.deepPurple,
+                            color: Colors.black,
                           ),
                         ),
                       ),
@@ -85,34 +85,33 @@ class _RegistrationPage extends State<RegistrationPage> {
                         decoration: InputDecoration(
                           labelText: 'Password',
                           labelStyle: TextStyle(
-                              color: Colors.deepPurple,
+                              color: Colors.black,
                               fontSize: 18,
                               fontWeight: FontWeight.w500),
                           border: UnderlineInputBorder(),
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
-                              color: Colors.deepPurple,
+                              color: Colors.black,
                               width: 2,
                             ),
                           ),
                           hintText: 'Enter your password',
                           hintStyle: TextStyle(
-                              color: Colors.deepPurple,
+                              color: Colors.black,
                               fontSize: 20,
                               fontWeight: FontWeight.w500),
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                           prefixIcon: Icon(
                             Icons.mail,
-                            color: Colors.deepPurple,
+                            color: Colors.black,
                           ),
                         ),
                       ),
                       DropdownButton<String>(
                         value: selectedItem,
                         icon: Icon(Icons.arrow_drop_down),
-                        style: TextStyle(color: Colors.deepPurple),
-                        underline:
-                            Container(height: 2, color: Colors.deepPurple),
+                        style: TextStyle(color: Colors.black),
+                        underline: Container(height: 2, color: Colors.black),
                         onChanged: (String? newValue) {
                           setState(() {
                             selectedItem = newValue!;
@@ -132,24 +131,23 @@ class _RegistrationPage extends State<RegistrationPage> {
                         child: ElevatedButton(
                           onPressed: () async {
                             final prefs = await SharedPreferences.getInstance();
-                            await prefs.setBool('isLoggedIn',
-                                true); // 👈 marks user as logged in
-                            await prefs.setString(
-                                'userType', selectedItem); // 👈 saves role
-                            await prefs.setString(
-                                'email', _emailController.text); // optional
+                            await prefs.setBool('isLoggedIn', true);
+                            await prefs.setString('userType', selectedItem);
+                            /*  await prefs.setString(
+                                'email', _emailController.text); */ // optional
 
                             Widget nextPage = selectedItem == 'Customer'
                                 ? CustomerHomePage()
                                 : DriverHomePage();
 
-                            if (!mounted) return;
-                            Navigator.of(context).push(
+                            if (!context.mounted) return;
+                            Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(builder: (_) => nextPage),
+                              (Route<dynamic> route) => false,
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.deepPurple,
+                              backgroundColor: Colors.black,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(0))),
                           child: Text(
@@ -176,21 +174,22 @@ class _RegistrationPage extends State<RegistrationPage> {
                         style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
-                            color: const Color.fromARGB(255, 84, 20, 130)),
+                            color: Colors.black54),
                       ),
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(
+                          Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
                               builder: (_) => LoginPage(),
                             ),
+                            (Route<dynamic> route) => false,
                           );
                         },
                         child: Text(
                           'Login',
                           style: TextStyle(
-                            color: Colors.deepPurple,
+                            color: Colors.black,
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
                           ),
