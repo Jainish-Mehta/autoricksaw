@@ -1,5 +1,8 @@
 import 'package:autoricksaw/app_drawer.dart';
+import 'package:autoricksaw/autoricksaw_list.dart';
+import 'package:autoricksaw/pickup_page.dart';
 import 'package:flutter/material.dart';
+
 import 'exit_pop_up.dart';
 
 class CustomerHomePage extends StatefulWidget {
@@ -35,12 +38,67 @@ class CustomerHomePageState extends State<CustomerHomePage> {
                   constraints: BoxConstraints(minHeight: constraints.maxHeight),
                   child: IntrinsicHeight(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 10),
-                        _buildTextField('Enter Location'),
+                        _buildTextField('Pickup Location'),
                         _buildMapBox(context),
-                        _buildTextField('Enter Destination'),
+                        _buildTextField('Dropoff Destination'),
+                        Padding(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          child: Row(
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => AutoricksawList(),
+                                    ),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  side: BorderSide(
+                                    color: Colors.black,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Text(
+                                  'See Price',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 5),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => PickupPage(),
+                                      ),
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    side: BorderSide(
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Pickup now',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                         _buildRecentBox(context),
                       ],
                     ),
@@ -62,9 +120,8 @@ class CustomerHomePageState extends State<CustomerHomePage> {
         borderRadius: BorderRadius.circular(50),
         child: TextField(
           decoration: InputDecoration(
-            prefixIcon: IconButton(
-                onPressed: () => {print('Search Clicked!')},
-                icon: Icon(Icons.search)),
+            prefixIcon:
+                IconButton(onPressed: () => {}, icon: Icon(Icons.search)),
             hintText: hint,
             hintStyle: const TextStyle(
               color: Colors.black,
@@ -77,6 +134,10 @@ class CustomerHomePageState extends State<CustomerHomePage> {
             filled: true,
             fillColor: Colors.white,
           ),
+          onTap: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (_) => PickupPage()));
+          },
         ),
       ),
     );
@@ -117,18 +178,38 @@ class CustomerHomePageState extends State<CustomerHomePage> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               gradient: RadialGradient(
-                colors: [Colors.yellow, Colors.black],
+                colors: [Colors.yellow, Colors.white],
                 radius: 6,
               ),
             ),
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Recent',
-                    style: TextStyle(color: Colors.black, fontSize: 20),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.05,
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        DecoratedBox(
+                          decoration: BoxDecoration(
+                              color: Colors.yellow,
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Text(
+                            'Recent:',
+                            style: TextStyle(
+                                decoration: TextDecoration.underline,
+                                decorationColor: Colors.black,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   Padding(
                     padding: EdgeInsets.all(5),

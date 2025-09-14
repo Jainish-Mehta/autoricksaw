@@ -25,12 +25,9 @@ class _RegistrationPage extends State<RegistrationPage> {
           width: 400,
           child: DecoratedBox(
             decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                gradient: LinearGradient(
-                    colors: [Colors.yellowAccent, Colors.greenAccent],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight)),
+              color: Colors.yellow,
+              borderRadius: BorderRadius.circular(10),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,

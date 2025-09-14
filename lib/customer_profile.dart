@@ -10,22 +10,15 @@ class CustomerProfileState extends State<CustomerProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(255, 244, 145, 1),
+      backgroundColor: Colors.yellow,
       appBar: AppBar(
         title: Text(
           'Profile',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
         ),
-        toolbarHeight: 35,
-        backgroundColor: Colors.yellow,
+        backgroundColor: Colors.white,
       ),
-      body: Container(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-                colors: [Colors.yellow, Colors.yellow.shade200],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter)),
-      ),
+      body: Container(decoration: BoxDecoration()),
     );
   }
 }

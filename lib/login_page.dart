@@ -1,9 +1,9 @@
-import 'package:autoricksaw/exit_pop_up.dart';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:autoricksaw/customer_home_page.dart';
 import 'package:autoricksaw/driver_home_page.dart';
+import 'package:autoricksaw/exit_pop_up.dart';
 import 'package:autoricksaw/registration.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   final String? selectedRole;
@@ -75,6 +75,10 @@ class _LoginPageState extends State<LoginPage> {
                     TextField(
                       controller: _controllerEmail,
                       decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(width: 1),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
                         label: Text(
                           'Email',
                           style: TextStyle(color: Colors.black),
@@ -82,10 +86,14 @@ class _LoginPageState extends State<LoginPage> {
                         prefixIcon: Icon(Icons.email, color: Colors.black),
                       ),
                     ),
-                    SizedBox(height: 5),
+                    SizedBox(height: 10),
                     TextField(
                       controller: _controllerPassword,
                       decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black, width: 1),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
                         label: Text(
                           'Password',
                           style: TextStyle(
