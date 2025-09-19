@@ -125,7 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                               child: const Text(
                                 ' Signup',
                                 style: TextStyle(
-                                  color: Colors.yellow,
+                                  color: Colors.black,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -169,7 +169,7 @@ class _LoginPageState extends State<LoginPage> {
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.yellow,
-                            foregroundColor: Colors.white,
+                            foregroundColor: Colors.black,
                             padding: EdgeInsets.symmetric(
                               horizontal: 32,
                               vertical: 12,
@@ -220,20 +220,19 @@ class _LoginPageState extends State<LoginPage> {
         ),
         child: Column(
           children: [
-            Icon(icon,
-                size: 48, color: isSelected ? Colors.white : Colors.black),
+            Icon(icon, size: 48, color: Colors.black),
             SizedBox(height: 8),
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? Colors.white : Colors.black,
+                color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
             ),
             if (isSelected)
               Padding(
-                padding: EdgeInsets.only(top: 8),
-                child: Icon(Icons.check_circle, color: Colors.white),
+                padding: EdgeInsets.only(top: 0),
+                child: Icon(Icons.check_circle, color: Colors.black),
               ),
           ],
         ),

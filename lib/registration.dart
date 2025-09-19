@@ -18,11 +18,11 @@ class _RegistrationPage extends State<RegistrationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.yellow,
+      backgroundColor: Colors.white,
       body: Center(
         child: SizedBox(
-          height: 600,
-          width: 400,
+          height: 550,
+          width: 375,
           child: DecoratedBox(
             decoration: BoxDecoration(
               color: Colors.yellow,
