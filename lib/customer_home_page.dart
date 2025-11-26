@@ -1,6 +1,6 @@
-import 'package:autoricksaw/app_drawer.dart';
-import 'package:autoricksaw/plan_your_ride.dart';
 import 'package:flutter/material.dart';
+import 'app_drawer.dart';
+import 'plan_your_ride.dart';
 import 'exit_pop_up.dart';
 
 class CustomerHomePage extends StatefulWidget {
@@ -14,13 +14,34 @@ class CustomerHomePageState extends State<CustomerHomePage> {
   final TransformationController _transformationController =
       TransformationController();
 
+  // Controllers for text fields
+  final TextEditingController pickupController = TextEditingController();
+  final TextEditingController dropoffController = TextEditingController();
+
+  final List<Map<String, String>> _addresses = [
+    {'name': 'Irani Restaurant', 'distance': '1.2 km'},
+    {'name': 'Bus Stop', 'distance': '0.8 km'},
+    {'name': 'Grand Hyatt Towers', 'distance': '2.3 km'},
+    {'name': 'Sree Padmanabha Temple', 'distance': '3.1 km'},
+    {'name': 'PRS Hospital', 'distance': '1.7 km'},
+    {'name': 'Technopark Phase 3', 'distance': '4.5 km'},
+    {'name': 'Kowdiar Palace', 'distance': '2.9 km'},
+    {'name': 'Museum Junction', 'distance': '3.8 km'},
+  ];
+
   @override
   void initState() {
     super.initState();
-
     final matrix = Matrix4.identity();
-    matrix.scaleByDouble(2, 2, 1, 1);
+    matrix.scaleByDouble(2.0, 2.0, 1.0, 1);
     _transformationController.value = matrix;
+  }
+
+  @override
+  void dispose() {
+    pickupController.dispose();
+    dropoffController.dispose();
+    super.dispose();
   }
 
   @override
@@ -38,163 +59,171 @@ class CustomerHomePageState extends State<CustomerHomePage> {
             'Customer Home Page',
             style: TextStyle(color: Colors.black),
           ),
+          backgroundColor: const Color.fromARGB(255, 254, 187, 38),
         ),
-        backgroundColor: Colors.yellow,
+        backgroundColor: const Color.fromARGB(255, 254, 187, 38),
         body: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: IntrinsicHeight(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 10),
-                        _buildTextField('Pickup Location'),
-                        _buildMapBox(context),
-                        _buildTextField('Dropoff Destination'),
-                        _buildRecentBox(context),
-                      ],
-                    ),
+          child: Stack(
+            children: [
+              // Fullscreen map background
+              Positioned.fill(
+                child: InteractiveViewer(
+                  transformationController: _transformationController,
+                  panEnabled: true,
+                  minScale: 1.0,
+                  maxScale: 4.0,
+                  child: Image.asset(
+                    'assets/Images/Map.png',
+                    fit: BoxFit.cover,
+                    alignment: Alignment.center,
                   ),
                 ),
-              );
-            },
+              ),
+
+              // Draggable bottom panel
+              DraggableScrollableSheet(
+                initialChildSize: 0.4,
+                minChildSize: 0.05,
+                maxChildSize: 0.85,
+                builder: (context, scrollController) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius:
+                          const BorderRadius.vertical(top: Radius.circular(16)),
+                      boxShadow: const [
+                        BoxShadow(color: Colors.black26, blurRadius: 6)
+                      ],
+                    ),
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // Drag handle
+                          Container(
+                            height: 5,
+                            width: 40,
+                            margin: const EdgeInsets.only(top: 8, bottom: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          const Text(
+                            'Select Address',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 8),
+                          const Divider(thickness: 1, color: Colors.grey),
+
+                          // Pickup field
+                          _buildTextField(
+                            hint: 'Pickup Location',
+                            prefixIcon: const Icon(
+                              Icons.gps_fixed,
+                              color: Color.fromARGB(255, 254, 187, 38),
+                            ),
+                            controller: pickupController,
+                          ),
+                          const SizedBox(height: 8),
+
+                          // Dropoff field
+                          _buildTextField(
+                            hint: 'Dropoff Destination',
+                            prefixIcon: const Icon(
+                              Icons.location_on,
+                              color: Color.fromARGB(255, 254, 187, 38),
+                            ),
+                            controller: dropoffController,
+                          ),
+                          const SizedBox(height: 8),
+                          const Divider(thickness: 1, color: Colors.grey),
+
+                          // Check Prices button
+                          ElevatedButton(
+                            onPressed: (pickupController.text.isNotEmpty &&
+                                    dropoffController.text.isNotEmpty)
+                                ? () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => PickupPage(
+                                          pickupLocation: pickupController.text,
+                                          dropoffLocation:
+                                              dropoffController.text,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                : null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  const Color.fromARGB(255, 254, 187, 38),
+                              foregroundColor: Colors.black,
+                              minimumSize: const Size.fromHeight(50),
+                            ),
+                            child: const Text('Next'),
+                          ),
+                          const SizedBox(height: 12),
+
+                          // Address list
+                          ..._addresses.map((address) => ListTile(
+                                dense: true,
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 4),
+                                leading: const Icon(Icons.access_time,
+                                    color: Colors.grey),
+                                title: Text(address['name']!),
+                                trailing: Text(
+                                  address['distance']!,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              )),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildTextField(String hint) {
+  Widget _buildTextField({
+    required String hint,
+    required Widget prefixIcon,
+    required TextEditingController controller,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       child: Material(
         elevation: 8,
         borderRadius: BorderRadius.circular(50),
         child: TextField(
+          controller: controller,
+          onChanged: (_) => setState(() {}),
           decoration: InputDecoration(
-            prefixIcon: IconButton(onPressed: () {}, icon: Icon(Icons.search)),
+            prefixIcon: prefixIcon,
             hintText: hint,
-            hintStyle: const TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.w500,
-              fontSize: 15,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(50),
-            ),
             filled: true,
             fillColor: Colors.white,
-          ),
-          onTap: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (_) => PickupPage()));
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMapBox(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.4,
-        width: double.infinity,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: InteractiveViewer(
-            transformationController: _transformationController,
-            panEnabled: true,
-            minScale: 1.0,
-            maxScale: 4.0,
-            child: Image.asset(
-              'assets/Map.png',
-              fit: BoxFit.cover,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+              borderSide: const BorderSide(color: Colors.grey, width: 1.5),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRecentBox(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-      child: Material(
-        elevation: 8,
-        borderRadius: BorderRadius.circular(20),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.25,
-          width: double.infinity,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              gradient: RadialGradient(
-                colors: [Colors.white, Colors.white],
-                radius: 6,
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.05,
-                    width: double.infinity,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: const Text(
-                            'Recent:',
-                            style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              decorationColor: Colors.black,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.all(5),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'NewLJIET to Home',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 20),
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          'Home to Work',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 20),
-                        ),
-                        SizedBox(height: 10),
-                        Text(
-                          'Work to Home',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 20),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+              borderSide: const BorderSide(
+                  color: Color.fromARGB(255, 254, 187, 38), width: 2.0),
             ),
           ),
         ),

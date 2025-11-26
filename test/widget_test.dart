@@ -1,31 +1,104 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:autoricksaw/main.dart';
+// Replace these with your actual pages
+import 'package:autoricksaw/login_page.dart';
+import 'package:autoricksaw/customer_home_page.dart';
+import 'package:autoricksaw/driver_home_page.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp(isLoggedIn: false, userType: null));
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MyApp());
+}
 
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Autorickshaw Registration',
+      theme: ThemeData(
+        inputDecorationTheme: const InputDecorationTheme(
+          border: OutlineInputBorder(),
+        ),
+      ),
+      debugShowCheckedModeBanner: false,
+      home: const SplashScreen(), // Start with splash
+    );
+  }
+}
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
-  });
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _navigateAfterDelay();
+  }
+
+  Future<void> _navigateAfterDelay() async {
+    // Simulate loading time (e.g., logo animation)
+    await Future.delayed(const Duration(seconds: 3));
+
+    // Load login state from SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    String? userType = prefs.getString('userType');
+
+    if (isLoggedIn) {
+      if (userType == "customer") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => CustomerHomePage()),
+        );
+      } else if (userType == "driver") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => DriverHomePage()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      }
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        color: Colors.white, // Background color
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Icon(Icons.local_taxi, size: 80, color: Colors.green),
+              SizedBox(height: 20),
+              Text(
+                "Autorickshaw App",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 40),
+              CircularProgressIndicator(), // Loading spinner
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

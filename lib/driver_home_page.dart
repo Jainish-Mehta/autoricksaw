@@ -40,7 +40,7 @@ class DriverHomePageState extends State<DriverHomePage> {
             style: TextStyle(color: Colors.black),
           ),
         ),
-        backgroundColor: Colors.yellow,
+        backgroundColor: Color.fromARGB(255, 254, 187, 38),
         body: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -140,7 +140,7 @@ class DriverHomePageState extends State<DriverHomePage> {
             minScale: 1.0,
             maxScale: 4.0,
             child: Image.asset(
-              'assets/Map.png',
+              'assets/Images/Map.png',
               fit: BoxFit.cover,
             ),
           ),

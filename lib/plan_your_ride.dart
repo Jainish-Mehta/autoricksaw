@@ -1,8 +1,16 @@
-import 'package:autoricksaw/autoricksaw_list.dart';
 import 'package:flutter/material.dart';
+import 'package:autoricksaw/autoricksaw_list.dart';
 
 class PickupPage extends StatefulWidget {
-  const PickupPage({super.key});
+  final String pickupLocation;
+  final String dropoffLocation;
+
+  const PickupPage({
+    super.key,
+    required this.pickupLocation,
+    required this.dropoffLocation,
+  });
+
   @override
   PickupPageState createState() => PickupPageState();
 }
@@ -13,24 +21,36 @@ class PickupPageState extends State<PickupPage> {
   double _pickupElevation = 0.1;
   double _dropoffElevation = 0.1;
 
-  final TextEditingController pickupController = TextEditingController();
-  final TextEditingController dropoffController = TextEditingController();
+  late TextEditingController pickupController;
+  late TextEditingController dropoffController;
+
+  final TransformationController _transformationController =
+      TransformationController();
+
+  // Toggle flags
+  bool _isEditingPickup = false;
+  bool _isEditingDropoff = false;
+
   @override
   void initState() {
     super.initState();
+
+    pickupController = TextEditingController(text: widget.pickupLocation);
+    dropoffController = TextEditingController(text: widget.dropoffLocation);
+
+    final matrix = Matrix4.identity();
+    matrix.scaleByDouble(2.0, 2.0, 1.0, 1);
+    _transformationController.value = matrix;
+
     _pickupFocusNode.addListener(() {
       setState(() {
-        _pickupElevation = (_pickupFocusNode.hasFocus ? 8 : 0.1)
-            .clamp(0.0, double.infinity)
-            .toDouble();
+        _pickupElevation = _pickupFocusNode.hasFocus ? 8 : 0.1;
       });
     });
 
     _dropoffFocusNode.addListener(() {
       setState(() {
-        _dropoffElevation = (_dropoffFocusNode.hasFocus ? 8 : 0.1)
-            .clamp(0.0, double.infinity)
-            .toDouble();
+        _dropoffElevation = _dropoffFocusNode.hasFocus ? 8 : 0.1;
       });
     });
   }
@@ -39,6 +59,8 @@ class PickupPageState extends State<PickupPage> {
   void dispose() {
     _pickupFocusNode.dispose();
     _dropoffFocusNode.dispose();
+    pickupController.dispose();
+    dropoffController.dispose();
     super.dispose();
   }
 
@@ -46,188 +68,216 @@ class PickupPageState extends State<PickupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Plan your Ride'),
-        backgroundColor: Colors.yellow,
+        title: const Text('Plan your Ride'),
+        backgroundColor: const Color.fromARGB(255, 254, 187, 38),
       ),
-      backgroundColor: Colors.white,
-      body: Center(
-        child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(12),
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Material(
-                            elevation: _pickupElevation,
-                            borderRadius: BorderRadius.circular(50),
-                            child: Padding(
-                              padding: EdgeInsets.all(0),
-                              child: TextField(
-                                focusNode: _pickupFocusNode,
-                                controller: pickupController,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                  prefixIcon: Icon(
-                                    Icons.search,
-                                    color: Colors.black,
-                                  ),
-                                  hintText: ('Pickup Location'),
-                                  hintStyle: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 15,
-                                  ),
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                ),
-                              ),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            // Fullscreen map background
+            Positioned.fill(
+              child: InteractiveViewer(
+                transformationController: _transformationController,
+                panEnabled: true,
+                minScale: 1.0,
+                maxScale: 4.0,
+                child: Image.asset(
+                  'assets/Images/Map.png',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+
+            // Bottom draggable sheet
+            DraggableScrollableSheet(
+              initialChildSize: 0.35,
+              minChildSize: 0.05,
+              maxChildSize: 0.4,
+              builder: (context, scrollController) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(16)),
+                    boxShadow: const [
+                      BoxShadow(color: Colors.black26, blurRadius: 6)
+                    ],
+                  ),
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Drag handle
+                        Center(
+                          child: Container(
+                            height: 5,
+                            width: 40,
+                            margin: const EdgeInsets.only(bottom: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Material(
-                            elevation: _dropoffElevation,
-                            borderRadius: BorderRadius.circular(50),
-                            child: Padding(
-                              padding: EdgeInsets.all(0),
-                              child: TextField(
-                                focusNode: _dropoffFocusNode,
-                                controller: dropoffController,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                  prefixIcon: Icon(
-                                    Icons.search,
-                                    color: Colors.black,
-                                  ),
-                                  hintText: ('Dropoff Location'),
-                                  hintStyle: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 15,
-                                  ),
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                ),
-                              ),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Distance',
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (pickupController.text.isNotEmpty &&
-                        dropoffController.text.isNotEmpty)
-                      Padding(
-                        padding: EdgeInsets.all(12),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => AutoricksawList(),
+                            const Text(
+                              '1.2km',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.yellow,
+                            )
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        ),
+
+                        // Pickup field (toggle view/edit)
+                        Material(
+                          elevation: _pickupElevation,
+                          borderRadius: BorderRadius.circular(50),
+                          child: _isEditingPickup
+                              ? TextField(
+                                  focusNode: _pickupFocusNode,
+                                  controller: pickupController,
+                                  decoration: InputDecoration(
+                                    prefixIcon: const Icon(
+                                      Icons.gps_fixed,
+                                      color: Color.fromARGB(255, 254, 187, 38),
+                                    ),
+                                    hintText: 'Pickup Location',
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(50),
+                                      borderSide: const BorderSide(
+                                          color: Colors.grey, width: 1.5),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(50),
+                                      borderSide: const BorderSide(
+                                          color:
+                                              Color.fromARGB(255, 254, 187, 38),
+                                          width: 2.0),
+                                    ),
+                                  ),
+                                )
+                              : ListTile(
+                                  leading: const Icon(Icons.gps_fixed,
+                                      color: Color.fromARGB(255, 254, 187, 38)),
+                                  title: Text(pickupController.text),
+                                  trailing: IconButton(
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      color: Color.fromARGB(255, 254, 187, 38),
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _isEditingPickup = true;
+                                      });
+                                    },
+                                  ),
+                                ),
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        // Dropoff field (toggle view/edit)
+                        Material(
+                          elevation: _dropoffElevation,
+                          borderRadius: BorderRadius.circular(50),
+                          child: _isEditingDropoff
+                              ? TextField(
+                                  focusNode: _dropoffFocusNode,
+                                  controller: dropoffController,
+                                  decoration: InputDecoration(
+                                    prefixIcon: const Icon(
+                                      Icons.location_on,
+                                      color: Color.fromARGB(255, 254, 187, 38),
+                                    ),
+                                    hintText: 'Dropoff Location',
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(50),
+                                      borderSide: const BorderSide(
+                                          color: Colors.grey, width: 1.5),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(50),
+                                      borderSide: const BorderSide(
+                                          color:
+                                              Color.fromARGB(255, 254, 187, 38),
+                                          width: 2.0),
+                                    ),
+                                  ),
+                                )
+                              : ListTile(
+                                  leading: const Icon(Icons.location_on,
+                                      color: Color.fromARGB(255, 254, 187, 38)),
+                                  title: Text(dropoffController.text),
+                                  trailing: IconButton(
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      color: Color.fromARGB(255, 254, 187, 38),
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _isEditingDropoff = true;
+                                      });
+                                    },
+                                  ),
+                                ),
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        // Check Prices button
+                        if (pickupController.text.isNotEmpty &&
+                            dropoffController.text.isNotEmpty)
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const AutoricksawList(),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  const Color.fromARGB(255, 254, 187, 38),
                               foregroundColor: Colors.black,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5),
-                              )),
-                          child: Text(
-                            'Check Prices',
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              minimumSize: const Size.fromHeight(50),
+                            ),
+                            child: const Text(
+                              'Check Autoricksaws',
+                              style: TextStyle(fontSize: 16),
+                            ),
                           ),
-                        ),
-                      ),
-                    Material(
-                      elevation: 8,
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        height: MediaQuery.of(context).size.height * 1,
-                        width: MediaQuery.of(context).size.width * 1,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 10),
-                          child: Column(
-                            children: [
-                              locationListCard(context,
-                                  '402, Sunrise Tower, Vastrapur, Ahmedabad – 380015'),
-                              locationListCard(context,
-                                  'B-12, Krishna Residency, Maninagar, Ahmedabad – 380008'),
-                              locationListCard(context,
-                                  '5A, Shyam Villa, Ghatlodia, Ahmedabad – 380061'),
-                              locationListCard(context,
-                                  '3rd Floor, Galaxy Plaza, SG Highway, Ahmedabad – 380015'),
-                              locationListCard(context,
-                                  '402, Orchid Elegance, Bodakdev, Ahmedabad – 380054'),
-                              locationListCard(context,
-                                  'C-17, Shivam Enclave, Vejalpur, Ahmedabad – 380051'),
-                              locationListCard(context,
-                                  'A-303, Green Park, Thaltej, Ahmedabad – 380059'),
-                              locationListCard(context,
-                                  '3rd Floor, Galaxy Plaza, SG Highway, Ahmedabad – 380015'),
-                              locationListCard(context,
-                                  'D-9, Sunrise Apartments, Paldi, Ahmedabad – 380007'),
-                              locationListCard(context,
-                                  'Flat 102, Silver Nest, Naranpura, Ahmedabad – 380013'),
-                              locationListCard(context,
-                                  'B-204, Harmony Homes, Chandkheda, Ahmedabad – 382424'),
-                              locationListCard(context,
-                                  '3rd Floor, Galaxy Plaza, SG Highway, Ahmedabad – 380015'),
-                            ],
-                          ),
-                        ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget locationListCard(BuildContext context, String location) {
-    return SizedBox(
-      width: double.infinity,
-      height: MediaQuery.of(context).size.height * 0.07,
-      child: Padding(
-        padding: EdgeInsets.all(1),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-              color: Colors.yellow, borderRadius: BorderRadius.circular(20)),
-          child: Center(
-            child: Text(
-              location,
+                  ),
+                );
+              },
             ),
-          ),
+          ],
         ),
       ),
     );
