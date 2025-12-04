@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               Text(
                 'Select Account Type',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -56,45 +56,57 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   _buildRoleCard(
                     role: 'customer',
-                    icon: Icons.person,
+                    iconWidget:
+                        const Icon(Icons.person, size: 48, color: Colors.black),
                     label: 'Customer',
                   ),
                   const SizedBox(width: 32),
                   _buildRoleCard(
                     role: 'driver',
-                    icon: Icons.local_taxi,
+                    iconWidget: Image.asset(
+                      'assets/Images/Auto.png',
+                      height: 48,
+                      width: 48,
+                    ),
                     label: 'Driver',
                   ),
                 ],
               ),
               const SizedBox(height: 32),
               Padding(
-                padding: EdgeInsets.all(12),
+                padding: const EdgeInsets.all(12),
                 child: Column(
                   children: [
                     TextField(
                       controller: _controllerEmail,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
-                          borderSide: BorderSide(width: 1),
+                          borderSide: const BorderSide(width: 1),
                           borderRadius: BorderRadius.circular(25),
                         ),
-                        label: Text(
+                        label: const Text(
                           'Email',
-                          style: TextStyle(color: Colors.black),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                            backgroundColor: Colors.white,
+                            fontSize: 20,
+                          ),
                         ),
-                        prefixIcon: Icon(Icons.email, color: Colors.black),
+                        prefixIcon:
+                            const Icon(Icons.email, color: Colors.black),
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     TextField(
                       controller: _controllerPassword,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black, width: 1),
+                          borderSide:
+                              const BorderSide(color: Colors.black, width: 1),
                           borderRadius: BorderRadius.circular(25),
                         ),
-                        label: Text(
+                        label: const Text(
                           'Password',
                           style: TextStyle(
                             color: Colors.black,
@@ -103,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
                             fontSize: 20,
                           ),
                         ),
-                        prefixIcon: Icon(Icons.lock, color: Colors.black),
+                        prefixIcon: const Icon(Icons.lock, color: Colors.black),
                       ),
                       obscureText: true,
                     ),
@@ -113,13 +125,13 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         Row(
                           children: [
-                            Text('No Account?'),
+                            const Text('No Account?'),
                             GestureDetector(
                               onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (_) => RegistrationPage()),
+                                      builder: (_) => const RegistrationPage()),
                                 );
                               },
                               child: const Text(
@@ -152,15 +164,15 @@ class _LoginPageState extends State<LoginPage> {
                               Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(
                                   builder: (_) => selectedRole == 'customer'
-                                      ? CustomerHomePage()
-                                      : DriverHomePage(),
+                                      ? const CustomerHomePage()
+                                      : const DriverHomePage(),
                                 ),
                                 (Route<dynamic> route) => false,
                               );
                             } else {
                               if (!mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
+                                const SnackBar(
                                   content: Text('Invalid credentials'),
                                   backgroundColor: Colors.red,
                                 ),
@@ -168,9 +180,9 @@ class _LoginPageState extends State<LoginPage> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.yellow,
+                            backgroundColor: Color.fromARGB(255, 254, 187, 38),
                             foregroundColor: Colors.black,
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                               horizontal: 32,
                               vertical: 12,
                             ),
@@ -178,7 +190,7 @@ class _LoginPageState extends State<LoginPage> {
                               borderRadius: BorderRadius.circular(0),
                             ),
                           ),
-                          child: Text(
+                          child: const Text(
                             'Login',
                             style: TextStyle(color: Colors.black),
                           ),
@@ -197,7 +209,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildRoleCard({
     required String role,
-    required IconData icon,
+    required Widget iconWidget,
     required String label,
   }) {
     final isSelected = selectedRole == role;
@@ -209,28 +221,32 @@ class _LoginPageState extends State<LoginPage> {
       },
       child: Container(
         width: 120,
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.yellow : Colors.grey.shade200,
+          color: isSelected
+              ? const Color.fromARGB(255, 254, 187, 38)
+              : Colors.grey.shade200,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? Colors.yellow : Colors.grey,
+            color: isSelected
+                ? const Color.fromARGB(255, 254, 187, 38)
+                : Colors.grey,
             width: 2,
           ),
         ),
         child: Column(
           children: [
-            Icon(icon, size: 48, color: Colors.black),
-            SizedBox(height: 8),
+            iconWidget,
+            const SizedBox(height: 8),
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
             ),
             if (isSelected)
-              Padding(
+              const Padding(
                 padding: EdgeInsets.only(top: 0),
                 child: Icon(Icons.check_circle, color: Colors.black),
               ),

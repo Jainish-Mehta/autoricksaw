@@ -27,7 +27,6 @@ class PickupPageState extends State<PickupPage> {
   final TransformationController _transformationController =
       TransformationController();
 
-  // Toggle flags
   bool _isEditingPickup = false;
   bool _isEditingDropoff = false;
 
@@ -74,7 +73,6 @@ class PickupPageState extends State<PickupPage> {
       body: SafeArea(
         child: Stack(
           children: [
-            // Fullscreen map background
             Positioned.fill(
               child: InteractiveViewer(
                 transformationController: _transformationController,
@@ -87,12 +85,10 @@ class PickupPageState extends State<PickupPage> {
                 ),
               ),
             ),
-
-            // Bottom draggable sheet
             DraggableScrollableSheet(
-              initialChildSize: 0.35,
+              initialChildSize: 0.45,
               minChildSize: 0.05,
-              maxChildSize: 0.4,
+              maxChildSize: 0.45,
               builder: (context, scrollController) {
                 return Container(
                   decoration: BoxDecoration(
@@ -105,173 +101,172 @@ class PickupPageState extends State<PickupPage> {
                   ),
                   child: SingleChildScrollView(
                     controller: scrollController,
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        // Drag handle
-                        Center(
-                          child: Container(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Center(
+                            child: Container(
+                              height: 5,
+                              width: 40,
+                              margin: const EdgeInsets.only(bottom: 12),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
                             height: 5,
-                            width: 40,
-                            margin: const EdgeInsets.only(bottom: 12),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[300],
-                              borderRadius: BorderRadius.circular(10),
-                            ),
                           ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Distance',
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            const Text(
-                              '1.2km',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Distance',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
                               ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 8,
-                        ),
-
-                        // Pickup field (toggle view/edit)
-                        Material(
-                          elevation: _pickupElevation,
-                          borderRadius: BorderRadius.circular(50),
-                          child: _isEditingPickup
-                              ? TextField(
-                                  focusNode: _pickupFocusNode,
-                                  controller: pickupController,
-                                  decoration: InputDecoration(
-                                    prefixIcon: const Icon(
-                                      Icons.gps_fixed,
-                                      color: Color.fromARGB(255, 254, 187, 38),
-                                    ),
-                                    hintText: 'Pickup Location',
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(50),
-                                      borderSide: const BorderSide(
-                                          color: Colors.grey, width: 1.5),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(50),
-                                      borderSide: const BorderSide(
-                                          color:
-                                              Color.fromARGB(255, 254, 187, 38),
-                                          width: 2.0),
-                                    ),
-                                  ),
-                                )
-                              : ListTile(
-                                  leading: const Icon(Icons.gps_fixed,
-                                      color: Color.fromARGB(255, 254, 187, 38)),
-                                  title: Text(pickupController.text),
-                                  trailing: IconButton(
-                                    icon: const Icon(
-                                      Icons.edit,
-                                      color: Color.fromARGB(255, 254, 187, 38),
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _isEditingPickup = true;
-                                      });
-                                    },
-                                  ),
+                              const Text(
+                                '1.2km',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                        ),
-
-                        const SizedBox(height: 12),
-
-                        // Dropoff field (toggle view/edit)
-                        Material(
-                          elevation: _dropoffElevation,
-                          borderRadius: BorderRadius.circular(50),
-                          child: _isEditingDropoff
-                              ? TextField(
-                                  focusNode: _dropoffFocusNode,
-                                  controller: dropoffController,
-                                  decoration: InputDecoration(
-                                    prefixIcon: const Icon(
-                                      Icons.location_on,
-                                      color: Color.fromARGB(255, 254, 187, 38),
-                                    ),
-                                    hintText: 'Dropoff Location',
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(50),
-                                      borderSide: const BorderSide(
-                                          color: Colors.grey, width: 1.5),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(50),
-                                      borderSide: const BorderSide(
-                                          color:
-                                              Color.fromARGB(255, 254, 187, 38),
-                                          width: 2.0),
-                                    ),
-                                  ),
-                                )
-                              : ListTile(
-                                  leading: const Icon(Icons.location_on,
-                                      color: Color.fromARGB(255, 254, 187, 38)),
-                                  title: Text(dropoffController.text),
-                                  trailing: IconButton(
-                                    icon: const Icon(
-                                      Icons.edit,
-                                      color: Color.fromARGB(255, 254, 187, 38),
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _isEditingDropoff = true;
-                                      });
-                                    },
-                                  ),
-                                ),
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        // Check Prices button
-                        if (pickupController.text.isNotEmpty &&
-                            dropoffController.text.isNotEmpty)
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const AutoricksawList(),
-                                ),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 254, 187, 38),
-                              foregroundColor: Colors.black,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              minimumSize: const Size.fromHeight(50),
-                            ),
-                            child: const Text(
-                              'Check Autoricksaws',
-                              style: TextStyle(fontSize: 16),
-                            ),
+                              )
+                            ],
                           ),
-                      ],
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          Material(
+                            elevation: _pickupElevation,
+                            borderRadius: BorderRadius.circular(50),
+                            child: _isEditingPickup
+                                ? TextField(
+                                    focusNode: _pickupFocusNode,
+                                    controller: pickupController,
+                                    decoration: InputDecoration(
+                                      prefixIcon: const Icon(
+                                        Icons.gps_fixed,
+                                        color:
+                                            Color.fromARGB(255, 254, 187, 38),
+                                      ),
+                                      hintText: 'Pickup Location',
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(50),
+                                        borderSide: const BorderSide(
+                                            color: Colors.grey, width: 1.5),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(50),
+                                        borderSide: const BorderSide(
+                                            color: Color.fromARGB(
+                                                255, 254, 187, 38),
+                                            width: 2.0),
+                                      ),
+                                    ),
+                                  )
+                                : ListTile(
+                                    leading: const Icon(Icons.gps_fixed,
+                                        color:
+                                            Color.fromARGB(255, 254, 187, 38)),
+                                    title: Text(pickupController.text),
+                                    trailing: IconButton(
+                                      icon: const Icon(
+                                        Icons.edit,
+                                        color:
+                                            Color.fromARGB(255, 254, 187, 38),
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _isEditingPickup = true;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                          ),
+                          const SizedBox(height: 12),
+                          Material(
+                            elevation: _dropoffElevation,
+                            borderRadius: BorderRadius.circular(50),
+                            child: _isEditingDropoff
+                                ? TextField(
+                                    focusNode: _dropoffFocusNode,
+                                    controller: dropoffController,
+                                    decoration: InputDecoration(
+                                      prefixIcon: const Icon(
+                                        Icons.location_on,
+                                        color:
+                                            Color.fromARGB(255, 254, 187, 38),
+                                      ),
+                                      hintText: 'Dropoff Location',
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(50),
+                                        borderSide: const BorderSide(
+                                            color: Colors.grey, width: 1.5),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(50),
+                                        borderSide: const BorderSide(
+                                            color: Color.fromARGB(
+                                                255, 254, 187, 38),
+                                            width: 2.0),
+                                      ),
+                                    ),
+                                  )
+                                : ListTile(
+                                    leading: const Icon(Icons.location_on,
+                                        color:
+                                            Color.fromARGB(255, 254, 187, 38)),
+                                    title: Text(dropoffController.text),
+                                    trailing: IconButton(
+                                      icon: const Icon(
+                                        Icons.edit,
+                                        color:
+                                            Color.fromARGB(255, 254, 187, 38),
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _isEditingDropoff = true;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                          ),
+                          const SizedBox(height: 20),
+                          if (pickupController.text.isNotEmpty &&
+                              dropoffController.text.isNotEmpty)
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const AutoricksawList(),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    const Color.fromARGB(255, 254, 187, 38),
+                                foregroundColor: Colors.black,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                minimumSize: const Size.fromHeight(50),
+                              ),
+                              child: const Text(
+                                'Check Autoricksaws',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                 );

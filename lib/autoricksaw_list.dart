@@ -16,7 +16,7 @@ class AutoricksawListState extends State<AutoricksawList> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Back'),
-        backgroundColor: Colors.white,
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       ),
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -87,20 +87,22 @@ class AutoricksawListState extends State<AutoricksawList> {
   }) {
     return Card(
       elevation: 6,
+      color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: const BorderSide(color: Colors.black, width: 1.5),
+        side: const BorderSide(
+          color: Colors.black,
+          width: 1.5,
+        ),
       ),
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
           children: [
-            // Top row: details left, photo right
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // LEFT SIDE: details
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,22 +119,20 @@ class AutoricksawListState extends State<AutoricksawList> {
                     ],
                   ),
                 ),
-
-                // RIGHT SIDE: photo/icon
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.yellow,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   padding: const EdgeInsets.all(8),
-                  child: const Icon(Icons.person, size: 70),
+                  child: Image.asset(
+                    'assets/Images/urban_tuk_tuk.png',
+                    width: 100,
+                    height: 100,
+                  ),
                 ),
               ],
             ),
-
             const SizedBox(height: 12),
-
-            // Bottom: full-width button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -150,7 +150,6 @@ class AutoricksawListState extends State<AutoricksawList> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 254, 187, 38),
-                  foregroundColor: Colors.yellow,
                   side: const BorderSide(color: Colors.black),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(

@@ -20,7 +20,9 @@ class AppDrawer extends StatelessWidget {
           SizedBox(
             height: 120,
             child: DrawerHeader(
-                decoration: BoxDecoration(color: Colors.yellow),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 254, 187, 38),
+                ),
                 child: Row(
                   children: [
                     Icon(Icons.person, color: Colors.black, size: 28),

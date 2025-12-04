@@ -25,8 +25,6 @@ class CustomerHomePageState extends State<CustomerHomePage> {
     {'name': 'Sree Padmanabha Temple', 'distance': '3.1 km'},
     {'name': 'PRS Hospital', 'distance': '1.7 km'},
     {'name': 'Technopark Phase 3', 'distance': '4.5 km'},
-    {'name': 'Kowdiar Palace', 'distance': '2.9 km'},
-    {'name': 'Museum Junction', 'distance': '3.8 km'},
   ];
 
   @override
@@ -84,7 +82,7 @@ class CustomerHomePageState extends State<CustomerHomePage> {
               DraggableScrollableSheet(
                 initialChildSize: 0.4,
                 minChildSize: 0.05,
-                maxChildSize: 0.85,
+                maxChildSize: 0.77,
                 builder: (context, scrollController) {
                   return Container(
                     decoration: BoxDecoration(
@@ -97,95 +95,100 @@ class CustomerHomePageState extends State<CustomerHomePage> {
                     ),
                     child: SingleChildScrollView(
                       controller: scrollController,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // Drag handle
-                          Container(
-                            height: 5,
-                            width: 40,
-                            margin: const EdgeInsets.only(top: 8, bottom: 10),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[300],
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          const Text(
-                            'Select Address',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 8),
-                          const Divider(thickness: 1, color: Colors.grey),
+                      child: Padding(
+                        padding: EdgeInsets.all(15),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            // Drag handle
 
-                          // Pickup field
-                          _buildTextField(
-                            hint: 'Pickup Location',
-                            prefixIcon: const Icon(
-                              Icons.gps_fixed,
-                              color: Color.fromARGB(255, 254, 187, 38),
+                            Container(
+                              height: 5,
+                              width: 40,
+                              margin: const EdgeInsets.only(top: 5, bottom: 10),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
-                            controller: pickupController,
-                          ),
-                          const SizedBox(height: 8),
-
-                          // Dropoff field
-                          _buildTextField(
-                            hint: 'Dropoff Destination',
-                            prefixIcon: const Icon(
-                              Icons.location_on,
-                              color: Color.fromARGB(255, 254, 187, 38),
+                            const SizedBox(
+                              height: 5,
                             ),
-                            controller: dropoffController,
-                          ),
-                          const SizedBox(height: 8),
-                          const Divider(thickness: 1, color: Colors.grey),
+                            const Text(
+                              'Select Address',
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 8),
+                            const Divider(thickness: 1, color: Colors.grey),
 
-                          // Check Prices button
-                          ElevatedButton(
-                            onPressed: (pickupController.text.isNotEmpty &&
-                                    dropoffController.text.isNotEmpty)
-                                ? () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => PickupPage(
-                                          pickupLocation: pickupController.text,
-                                          dropoffLocation:
-                                              dropoffController.text,
+                            // Pickup field
+                            _buildTextField(
+                              hint: 'Pickup Location',
+                              prefixIcon: const Icon(
+                                Icons.gps_fixed,
+                                color: Color.fromARGB(255, 254, 187, 38),
+                              ),
+                              controller: pickupController,
+                            ),
+                            const SizedBox(height: 8),
+
+                            // Dropoff field
+                            _buildTextField(
+                              hint: 'Dropoff Destination',
+                              prefixIcon: const Icon(
+                                Icons.location_on,
+                                color: Color.fromARGB(255, 254, 187, 38),
+                              ),
+                              controller: dropoffController,
+                            ),
+                            const SizedBox(height: 8),
+                            const Divider(thickness: 1, color: Colors.grey),
+
+                            // Check Prices button
+                            ElevatedButton(
+                              onPressed: (pickupController.text.isNotEmpty &&
+                                      dropoffController.text.isNotEmpty)
+                                  ? () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => PickupPage(
+                                            pickupLocation:
+                                                pickupController.text,
+                                            dropoffLocation:
+                                                dropoffController.text,
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  }
-                                : null,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 254, 187, 38),
-                              foregroundColor: Colors.black,
-                              minimumSize: const Size.fromHeight(50),
+                                      );
+                                    }
+                                  : null,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    const Color.fromARGB(255, 254, 187, 38),
+                                foregroundColor: Colors.black,
+                                minimumSize: const Size.fromHeight(50),
+                              ),
+                              child: const Text('Next'),
                             ),
-                            child: const Text('Next'),
-                          ),
-                          const SizedBox(height: 12),
+                            const SizedBox(height: 12),
 
-                          // Address list
-                          ..._addresses.map((address) => ListTile(
-                                dense: true,
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 4),
-                                leading: const Icon(Icons.access_time,
-                                    color: Colors.grey),
-                                title: Text(address['name']!),
-                                trailing: Text(
-                                  address['distance']!,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              )),
-                        ],
+                            // Address list
+                            ..._addresses.map((address) => ListTile(
+                                  dense: true,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 4),
+                                  leading: const Icon(Icons.access_time,
+                                      color: Colors.grey),
+                                  title: Text(address['name']!),
+                                  trailing: Text(
+                                    address['distance']!,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                )),
+                          ],
+                        ),
                       ),
                     ),
                   );

@@ -25,7 +25,7 @@ class _RegistrationPage extends State<RegistrationPage> {
           width: 375,
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: Colors.yellow,
+              color: Color.fromARGB(255, 254, 187, 38),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -150,7 +150,7 @@ class _RegistrationPage extends State<RegistrationPage> {
                           child: Text(
                             'Create Account',
                             style: TextStyle(
-                              color: const Color.fromARGB(255, 225, 210, 255),
+                              color: const Color.fromARGB(255, 254, 187, 38),
                               fontWeight: FontWeight.w500,
                               fontSize: 18,
                             ),

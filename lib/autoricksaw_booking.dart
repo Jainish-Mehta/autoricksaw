@@ -1,3 +1,4 @@
+import 'package:autoricksaw/cancel_ride.dart';
 import 'package:flutter/material.dart';
 import 'package:autoricksaw/customer_home_page.dart';
 import 'exit_pop_up.dart'; // <-- your reusable popup widget
@@ -90,43 +91,35 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                   ),
                 ],
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: TextButton(
-                      onPressed: () {
-                        handlePopResult(
-                          context,
-                          false,
-                          null,
-                          title: 'Cancel Ride?',
-                          message: 'Do you really want to cancel the ride?',
-                          confirmText: 'Yes',
-                          cancelText: 'No',
-                          onConfirm: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => const CustomerHomePage()),
-                            );
-                          },
-                        );
-                      },
-                      child: const Text(
-                        'Cancel Ride',
-                        style: TextStyle(color: Colors.black, fontSize: 16),
-                        overflow: TextOverflow.ellipsis, // prevent overflow
+              child: Padding(
+                padding: EdgeInsets.all(5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (_) => CancelRide(),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          'Cancel Ride',
+                          style: TextStyle(color: Colors.black, fontSize: 16),
+                          overflow: TextOverflow.ellipsis, // prevent overflow
+                        ),
                       ),
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.cancel),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
+                    IconButton(
+                      icon: const Icon(Icons.cancel),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -176,13 +169,13 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
 
             // Bottom draggable detail sheet
             DraggableScrollableSheet(
-              initialChildSize: 0.25,
+              initialChildSize: 0.28,
               minChildSize: 0.05,
-              maxChildSize: 0.3, // allow more drag
+              maxChildSize: 0.28, // allow more drag
               builder: (context, scrollController) {
                 return Container(
                   decoration: const BoxDecoration(
-                    color: Colors.white,
+                    color: Color.fromARGB(255, 254, 187, 38),
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20),
@@ -190,76 +183,104 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                   ),
                   child: ListView(
                     controller: scrollController,
-                    padding: const EdgeInsets.all(15),
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
                     children: [
                       // drag handle
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Center(
                         child: Container(
                           height: 5,
                           width: 40,
                           margin: const EdgeInsets.only(top: 8, bottom: 10),
                           decoration: BoxDecoration(
-                            color: Colors.grey[300],
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
                       const SizedBox(height: 5),
-                      const Divider(thickness: 1, color: Colors.grey),
+                      const Divider(thickness: 1, color: Colors.white),
                       // arrival + fare
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
                             'Arrive in: 10min',
-                            style: TextStyle(color: Colors.black, fontSize: 16),
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                            ),
                           ),
                           Text(
                             'Fare: ${widget.fare}',
-                            style: const TextStyle(color: Colors.black),
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                            ),
                           ),
                         ],
                       ),
-                      const Divider(thickness: 1, color: Colors.grey),
+                      const Divider(thickness: 1, color: Colors.white),
                       const SizedBox(height: 12),
 
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Avatar on the left
-                            SizedBox(
-                              height: 100,
-                              width: 100,
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  color: Colors.grey,
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                child: const Icon(Icons.person,
-                                    size: 50, color: Colors.white),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Avatar on the left
+                          SizedBox(
+                            height: 100,
+                            width: 100,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.circular(50),
                               ),
+                              child: const Icon(Icons.person,
+                                  size: 50, color: Colors.white),
                             ),
+                          ),
 
-                            const SizedBox(
-                                width: 160), // gap between avatar and details
-
-                            // Details aligned to the right
-                            Column(
+                          // Details aligned to the right
+                          Expanded(
+                            child: Column(
                               crossAxisAlignment:
                                   CrossAxisAlignment.end, // <-- right align
                               children: [
-                                Text(widget.driverName),
+                                Text(
+                                  widget.driverName,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16,
+                                  ),
+                                ),
                                 const SizedBox(height: 10),
-                                Text(widget.driverPhoneNo),
+                                Text(
+                                  widget.driverPhoneNo,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16,
+                                  ),
+                                ),
                                 const SizedBox(height: 10),
-                                Text(widget.vehicalNo),
+                                Text(
+                                  widget.vehicalNo,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16,
+                                  ),
+                                ),
                               ],
                             ),
-                          ],
-                        ),
-                      )
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 );
