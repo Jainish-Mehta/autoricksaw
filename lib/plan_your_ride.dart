@@ -1,3 +1,4 @@
+import 'package:autoricksaw/maps.dart';
 import 'package:flutter/material.dart';
 import 'package:autoricksaw/autoricksaw_list.dart';
 
@@ -74,16 +75,7 @@ class PickupPageState extends State<PickupPage> {
         child: Stack(
           children: [
             Positioned.fill(
-              child: InteractiveViewer(
-                transformationController: _transformationController,
-                panEnabled: true,
-                minScale: 1.0,
-                maxScale: 4.0,
-                child: Image.asset(
-                  'assets/Images/Map.png',
-                  fit: BoxFit.cover,
-                ),
-              ),
+              child: AhmedabadMap(),
             ),
             DraggableScrollableSheet(
               initialChildSize: 0.45,

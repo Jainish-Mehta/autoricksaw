@@ -18,10 +18,6 @@ class _AhmedabadMapState extends State<AhmedabadMap> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ahmedabad Map'),
-        backgroundColor: Color.fromARGB(255, 254, 187, 38),
-      ),
       body: Stack(
         children: [
           FlutterMap(
@@ -56,16 +52,16 @@ class _AhmedabadMapState extends State<AhmedabadMap> {
 
           // Floating button to move back to Ahmedabad
           Positioned(
-            bottom: 20,
-            right: 20,
-            child: FloatingActionButton(
-              backgroundColor: const Color.fromARGB(255, 254, 187, 38),
-              onPressed: () {
-                _mapController.move(_ahmedabad, 12);
-              },
-              child: const Icon(Icons.my_location),
-            ),
-          ),
+              top: 20,
+              left: 20,
+              child: FloatingActionButton(
+                heroTag: 'ahmedabad_map_fab', // unique tag for this FAB
+                backgroundColor: const Color.fromARGB(255, 254, 187, 38),
+                onPressed: () {
+                  _mapController.move(_ahmedabad, 12);
+                },
+                child: const Icon(Icons.my_location),
+              )),
         ],
       ),
     );

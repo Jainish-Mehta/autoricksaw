@@ -1,7 +1,12 @@
-import 'package:autoricksaw/cancel_ride.dart';
+import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:autoricksaw/customer_home_page.dart';
-import 'exit_pop_up.dart'; // <-- your reusable popup widget
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:http/http.dart' as http;
+import 'cancel_ride.dart';
+import 'customer_home_page.dart';
+import 'exit_pop_up.dart';
 
 class AutoricksawBooking extends StatefulWidget {
   final String cost;
@@ -24,19 +29,49 @@ class AutoricksawBooking extends StatefulWidget {
 }
 
 class AutoricksawBookingState extends State<AutoricksawBooking> {
-  final TransformationController _transformationController =
-      TransformationController();
+  final MapController _mapController = MapController();
+
+  // Example locations
+  final LatLng newlj =
+      LatLng(23.0415, 72.5171); // Newlj Institute, Pakwan Circle
+  final LatLng sabarmati = LatLng(23.0635, 72.5853); // Sabarmati
+
+  List<LatLng> routePoints = [];
 
   @override
   void initState() {
     super.initState();
-    final matrix = Matrix4.identity();
-    matrix.scaleByDouble(2.0, 2.0, 1.0, 1); // corrected scale method
-    _transformationController.value = matrix;
+    fetchRoute();
+  }
+
+  Future<void> fetchRoute() async {
+    // Replace with your GraphHopper API Key (free tier)
+    const apiKey = '34526283-cc7d-48b3-93d2-dbfb1dc461cd';
+
+    final url =
+        'https://graphhopper.com/api/1/route?point=${newlj.latitude},${newlj.longitude}&point=${sabarmati.latitude},${sabarmati.longitude}&vehicle=car&points_encoded=false&key=$apiKey';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final List coords = data['paths'][0]['points']['coordinates'];
+
+      setState(() {
+        routePoints = coords
+            .map<LatLng>((c) => LatLng(c[1] as double, c[0] as double))
+            .toList();
+      });
+    } else {
+      log('Routing failed: ${response.body}');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final sheetInitialSize = 0.28; // same as draggable sheet
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -59,20 +94,6 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
       child: Scaffold(
         extendBodyBehindAppBar: true,
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          actions: [
-            Builder(
-              builder: (context) => IconButton(
-                icon: const Icon(Icons.menu),
-                onPressed: () {
-                  Scaffold.of(context).openEndDrawer();
-                },
-              ),
-            ),
-          ],
-        ),
         endDrawer: Padding(
           padding: const EdgeInsets.all(12),
           child: Align(
@@ -92,31 +113,26 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                 ],
               ),
               child: Padding(
-                padding: EdgeInsets.all(5),
+                padding: const EdgeInsets.all(5),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Flexible(
                       child: TextButton(
                         onPressed: () {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (_) => CancelRide(),
-                            ),
-                          );
+                          Navigator.of(context).push(
+                              MaterialPageRoute(builder: (_) => CancelRide()));
                         },
                         child: const Text(
                           'Cancel Ride',
                           style: TextStyle(color: Colors.black, fontSize: 16),
-                          overflow: TextOverflow.ellipsis, // prevent overflow
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ),
                     IconButton(
                       icon: const Icon(Icons.cancel),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
+                      onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
                 ),
@@ -126,52 +142,74 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
         ),
         body: Stack(
           children: [
-            // Fullscreen map
-            InteractiveViewer(
-              transformationController: _transformationController,
-              panEnabled: true,
-              maxScale: 4,
-              minScale: 1,
-              child: SizedBox.expand(
-                child: Image.asset(
-                  'assets/Images/Map.png',
-                  fit: BoxFit.cover,
+            // Fullscreen Map
+            Positioned.fill(
+              child: FlutterMap(
+                mapController: _mapController,
+                options: MapOptions(
+                  initialCenter: newlj,
+                  initialZoom: 13,
+                  minZoom: 12,
+                  maxZoom: 18,
+                ),
+                children: [
+                  TileLayer(
+                    urlTemplate:
+                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    userAgentPackageName: 'com.example.autoricksaw',
+                  ),
+                  if (routePoints.isNotEmpty)
+                    PolylineLayer(
+                      polylines: [
+                        Polyline(
+                          points: routePoints,
+                          color: const Color.fromARGB(255, 254, 187, 38),
+                          strokeWidth: 5,
+                        ),
+                      ],
+                    ),
+                  MarkerLayer(
+                    markers: [
+                      Marker(
+                        point: newlj,
+                        child: const Icon(Icons.location_on,
+                            color: Colors.green, size: 40),
+                      ),
+                      Marker(
+                        point: sabarmati,
+                        child: const Icon(Icons.location_on,
+                            color: Colors.red, size: 40),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            // Transparent AppBar with SafeArea
+            SafeArea(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Builder(
+                      builder: (context) => IconButton(
+                        icon: const Icon(Icons.menu, color: Colors.black),
+                        onPressed: () => Scaffold.of(context).openEndDrawer(),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
 
-            // Overlay info (arrival/fare)
-            /*Positioned(
-              bottom: 150,
-              left: 10,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.6),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Arrive in: 10min',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                    Text(
-                      'Fare: ${widget.fare}',
-                      style: const TextStyle(color: Colors.white),
-                    )
-                  ],
-                ),
-              ),
-            ),*/
-
-            // Bottom draggable detail sheet
+            // Bottom draggable sheet
             DraggableScrollableSheet(
-              initialChildSize: 0.28,
+              initialChildSize: sheetInitialSize,
               minChildSize: 0.05,
-              maxChildSize: 0.28, // allow more drag
+              maxChildSize: 0.28,
               builder: (context, scrollController) {
                 return Container(
                   decoration: const BoxDecoration(
@@ -185,10 +223,7 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                     controller: scrollController,
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     children: [
-                      // drag handle
-                      const SizedBox(
-                        height: 10,
-                      ),
+                      const SizedBox(height: 10),
                       Center(
                         child: Container(
                           height: 5,
@@ -200,9 +235,8 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 5),
                       const Divider(thickness: 1, color: Colors.white),
-                      // arrival + fare
+                      const SizedBox(height: 5),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -216,7 +250,7 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                           ),
                           Text(
                             'Fare: ${widget.fare}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.w500,
                               fontSize: 16,
@@ -226,11 +260,9 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                       ),
                       const Divider(thickness: 1, color: Colors.white),
                       const SizedBox(height: 12),
-
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Avatar on the left
                           SizedBox(
                             height: 100,
                             width: 100,
@@ -243,38 +275,32 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                                   size: 50, color: Colors.white),
                             ),
                           ),
-
-                          // Details aligned to the right
                           Expanded(
                             child: Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.end, // <-- right align
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
                                   widget.driverName,
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 16,
-                                  ),
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16),
                                 ),
                                 const SizedBox(height: 10),
                                 Text(
                                   widget.driverPhoneNo,
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 16,
-                                  ),
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16),
                                 ),
                                 const SizedBox(height: 10),
                                 Text(
                                   widget.vehicalNo,
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 16,
-                                  ),
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16),
                                 ),
                               ],
                             ),
@@ -285,6 +311,19 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                   ),
                 );
               },
+            ),
+
+            // Floating location button above sheet
+            Positioned(
+              bottom: screenHeight * sheetInitialSize + 20,
+              right: 20,
+              child: FloatingActionButton(
+                backgroundColor: const Color.fromARGB(255, 254, 187, 38),
+                onPressed: () {
+                  _mapController.move(newlj, 14);
+                },
+                child: const Icon(Icons.my_location),
+              ),
             ),
           ],
         ),

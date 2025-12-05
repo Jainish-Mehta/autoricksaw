@@ -1,5 +1,5 @@
 import 'package:autoricksaw/customer_home_page.dart';
-import 'package:autoricksaw/maps.dart';
+//import 'package:autoricksaw/maps.dart';
 import 'package:flutter/material.dart';
 
 class CancelRide extends StatefulWidget {
@@ -127,7 +127,7 @@ class CancelRideState extends State<CancelRide> {
                     ? () => Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
-                              builder: (_) => const AhmedabadMap()),
+                              builder: (_) => const CustomerHomePage()),
                           (Route<dynamic> route) => false,
                         )
                     : null,

@@ -1,4 +1,7 @@
+import 'package:autoricksaw/maps.dart';
 import 'package:flutter/material.dart';
+//import 'package:flutter_map/flutter_map.dart';
+//import 'package:latlong2/latlong.dart';
 import 'app_drawer.dart';
 import 'plan_your_ride.dart';
 import 'exit_pop_up.dart';
@@ -11,8 +14,11 @@ class CustomerHomePage extends StatefulWidget {
 }
 
 class CustomerHomePageState extends State<CustomerHomePage> {
-  final TransformationController _transformationController =
-      TransformationController();
+  // Map controller
+  //final MapController _mapController = MapController();
+
+  // Default location: Ahmedabad
+  //final LatLng _ahmedabad = const LatLng(23.0215374, 72.5800568);
 
   // Controllers for text fields
   final TextEditingController pickupController = TextEditingController();
@@ -23,17 +29,7 @@ class CustomerHomePageState extends State<CustomerHomePage> {
     {'name': 'Bus Stop', 'distance': '0.8 km'},
     {'name': 'Grand Hyatt Towers', 'distance': '2.3 km'},
     {'name': 'Sree Padmanabha Temple', 'distance': '3.1 km'},
-    {'name': 'PRS Hospital', 'distance': '1.7 km'},
-    {'name': 'Technopark Phase 3', 'distance': '4.5 km'},
   ];
-
-  @override
-  void initState() {
-    super.initState();
-    final matrix = Matrix4.identity();
-    matrix.scaleByDouble(2.0, 2.0, 1.0, 1);
-    _transformationController.value = matrix;
-  }
 
   @override
   void dispose() {
@@ -65,24 +61,13 @@ class CustomerHomePageState extends State<CustomerHomePage> {
             children: [
               // Fullscreen map background
               Positioned.fill(
-                child: InteractiveViewer(
-                  transformationController: _transformationController,
-                  panEnabled: true,
-                  minScale: 1.0,
-                  maxScale: 4.0,
-                  child: Image.asset(
-                    'assets/Images/Map.png',
-                    fit: BoxFit.cover,
-                    alignment: Alignment.center,
-                  ),
-                ),
+                child: AhmedabadMap(),
               ),
 
-              // Draggable bottom panel
               DraggableScrollableSheet(
                 initialChildSize: 0.4,
                 minChildSize: 0.05,
-                maxChildSize: 0.77,
+                maxChildSize: 0.67,
                 builder: (context, scrollController) {
                   return Container(
                     decoration: BoxDecoration(
@@ -96,12 +81,10 @@ class CustomerHomePageState extends State<CustomerHomePage> {
                     child: SingleChildScrollView(
                       controller: scrollController,
                       child: Padding(
-                        padding: EdgeInsets.all(15),
+                        padding: const EdgeInsets.all(15),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            // Drag handle
-
                             Container(
                               height: 5,
                               width: 40,
@@ -111,9 +94,7 @@ class CustomerHomePageState extends State<CustomerHomePage> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
-                            const SizedBox(
-                              height: 5,
-                            ),
+                            const SizedBox(height: 5),
                             const Text(
                               'Select Address',
                               style: TextStyle(
@@ -121,8 +102,6 @@ class CustomerHomePageState extends State<CustomerHomePage> {
                             ),
                             const SizedBox(height: 8),
                             const Divider(thickness: 1, color: Colors.grey),
-
-                            // Pickup field
                             _buildTextField(
                               hint: 'Pickup Location',
                               prefixIcon: const Icon(
@@ -132,8 +111,6 @@ class CustomerHomePageState extends State<CustomerHomePage> {
                               controller: pickupController,
                             ),
                             const SizedBox(height: 8),
-
-                            // Dropoff field
                             _buildTextField(
                               hint: 'Dropoff Destination',
                               prefixIcon: const Icon(
@@ -144,8 +121,6 @@ class CustomerHomePageState extends State<CustomerHomePage> {
                             ),
                             const SizedBox(height: 8),
                             const Divider(thickness: 1, color: Colors.grey),
-
-                            // Check Prices button
                             ElevatedButton(
                               onPressed: (pickupController.text.isNotEmpty &&
                                       dropoffController.text.isNotEmpty)
@@ -172,8 +147,6 @@ class CustomerHomePageState extends State<CustomerHomePage> {
                               child: const Text('Next'),
                             ),
                             const SizedBox(height: 12),
-
-                            // Address list
                             ..._addresses.map((address) => ListTile(
                                   dense: true,
                                   contentPadding: const EdgeInsets.symmetric(
