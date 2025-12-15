@@ -8,7 +8,6 @@ class AutoricksawList extends StatefulWidget {
 }
 
 class AutoricksawListState extends State<AutoricksawList> {
-  // Just count how many autos you have
   final int autoCount = 6;
 
   @override
@@ -23,7 +22,6 @@ class AutoricksawListState extends State<AutoricksawList> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header + count
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(
@@ -48,7 +46,6 @@ class AutoricksawListState extends State<AutoricksawList> {
               ),
             ),
 
-            // Scrollable list of cards (unchanged)
             Expanded(
               child: ListView(
                 padding:
@@ -75,7 +72,6 @@ class AutoricksawListState extends State<AutoricksawList> {
     );
   }
 
-  // Your existing card builder stays untouched
   Widget buildRicksawCard(
     String driverName,
     String numberPlate,

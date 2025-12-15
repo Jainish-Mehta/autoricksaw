@@ -22,9 +22,10 @@ class _LoginPageState extends State<LoginPage> {
     selectedRole = widget.selectedRole ?? 'customer';
   }
 
-  final String customerLoginID = '';
-  final String driverLoginID = '';
-  final String password = '';
+  final String customerLoginID = 'Customer@1234';
+  final String driverLoginID = 'Driver@1234';
+  final String customerPassword = 'Customer@1234';
+  final String driverPassword = 'Driver@1234';
 
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
@@ -151,10 +152,10 @@ class _LoginPageState extends State<LoginPage> {
 
                             if ((selectedRole == 'customer' &&
                                     email == customerLoginID &&
-                                    pass == password) ||
+                                    pass == customerPassword) ||
                                 (selectedRole == 'driver' &&
                                     email == driverLoginID &&
-                                    pass == password)) {
+                                    pass == driverPassword)) {
                               final prefs =
                                   await SharedPreferences.getInstance();
                               await prefs.setBool('isLoggedIn', true);

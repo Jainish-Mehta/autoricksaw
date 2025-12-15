@@ -13,7 +13,7 @@ Future<void> handlePopResult(
   VoidCallback? onConfirm,
 }) async {
   if (!didPop) {
-    final navigator = Navigator.of(context); // cache before async
+    final navigator = Navigator.of(context);
     final shouldExit = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -34,10 +34,8 @@ Future<void> handlePopResult(
 
     if (shouldExit == true) {
       if (onConfirm != null) {
-        // Custom action (e.g. navigate to home page)
         onConfirm();
       } else {
-        // Default exit behavior
         if (Platform.isAndroid) {
           SystemNavigator.pop();
         } else {

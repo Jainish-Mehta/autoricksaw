@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// Replace these with your actual pages
 import 'package:autoricksaw/login_page.dart';
 import 'package:autoricksaw/customer_home_page.dart';
 import 'package:autoricksaw/driver_home_page.dart';
@@ -25,7 +24,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home: const SplashScreen(), // Start with splash
+      home: const SplashScreen(),
     );
   }
 }
@@ -45,10 +44,8 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _navigateAfterDelay() async {
-    // Simulate loading time (logo animation, etc.)
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 1));
 
-    // Load login state from SharedPreferences
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
     String? userType = prefs.getString('userType');
@@ -84,7 +81,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Color.fromARGB(255, 254, 187, 38), // Background color
+        color: Color.fromARGB(255, 254, 187, 38),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -102,7 +99,7 @@ class _SplashScreenState extends State<SplashScreen> {
               SizedBox(height: 40),
               CircularProgressIndicator(
                 color: Colors.black,
-              ), // Loading spinner
+              ),
             ],
           ),
         ),

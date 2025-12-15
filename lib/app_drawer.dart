@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'customer_profile.dart';
 
 class AppDrawer extends StatelessWidget {
-  final String userType; // 'Driver' or 'Customer'
+  final String userType;
   final String userName;
 
   const AppDrawer({required this.userType, required this.userName, super.key});
@@ -28,12 +28,10 @@ class AppDrawer extends StatelessWidget {
                     Icon(Icons.person, color: Colors.black, size: 28),
                     SizedBox(width: 12),
                     Expanded(
-                      // 👈 Ensures text doesn't overflow
                       child: Text(
                         '$userType: $userName',
                         style: TextStyle(color: Colors.black, fontSize: 20),
-                        overflow:
-                            TextOverflow.ellipsis, // 👈 Adds "..." if too long
+                        overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                         softWrap: false,
                       ),
@@ -79,7 +77,7 @@ class AppDrawer extends StatelessWidget {
                     color: Colors.black, fontWeight: FontWeight.bold)),
             onTap: () async {
               final prefs = await SharedPreferences.getInstance();
-              await prefs.clear(); // clears isLoggedIn and userType
+              await prefs.clear();
               if (!context.mounted) return;
               Navigator.pushAndRemoveUntil(
                 context,

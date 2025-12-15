@@ -24,7 +24,7 @@ class CancelRideState extends State<CancelRide> {
   void initState() {
     super.initState();
     otherController.addListener(() {
-      setState(() {}); // rebuild when text changes
+      setState(() {});
     });
   }
 
@@ -117,7 +117,6 @@ class CancelRideState extends State<CancelRide> {
             ),
           ),
 
-          // Submit button pinned at bottom
           Padding(
             padding: const EdgeInsets.all(12),
             child: SizedBox(

@@ -1,7 +1,7 @@
 import 'package:autoricksaw/maps.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter_map/flutter_map.dart';
-//import 'package:latlong2/latlong.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'app_drawer.dart';
 import 'plan_your_ride.dart';
 import 'exit_pop_up.dart';
@@ -14,13 +14,9 @@ class CustomerHomePage extends StatefulWidget {
 }
 
 class CustomerHomePageState extends State<CustomerHomePage> {
-  // Map controller
-  //final MapController _mapController = MapController();
+  final MapController _mapController = MapController();
+  final LatLng _ahmedabad = const LatLng(23.0215374, 72.5800568);
 
-  // Default location: Ahmedabad
-  //final LatLng _ahmedabad = const LatLng(23.0215374, 72.5800568);
-
-  // Controllers for text fields
   final TextEditingController pickupController = TextEditingController();
   final TextEditingController dropoffController = TextEditingController();
 
@@ -28,8 +24,9 @@ class CustomerHomePageState extends State<CustomerHomePage> {
     {'name': 'Irani Restaurant', 'distance': '1.2 km'},
     {'name': 'Bus Stop', 'distance': '0.8 km'},
     {'name': 'Grand Hyatt Towers', 'distance': '2.3 km'},
-    {'name': 'Sree Padmanabha Temple', 'distance': '3.1 km'},
   ];
+
+  double _sheetExtent = 0.4;
 
   @override
   void dispose() {
@@ -40,6 +37,8 @@ class CustomerHomePageState extends State<CustomerHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -59,95 +58,117 @@ class CustomerHomePageState extends State<CustomerHomePage> {
         body: SafeArea(
           child: Stack(
             children: [
-              // Fullscreen map background
               Positioned.fill(
-                child: AhmedabadMap(),
+                child: AhmedabadMap(mapController: _mapController),
               ),
-
-              DraggableScrollableSheet(
-                initialChildSize: 0.4,
-                minChildSize: 0.05,
-                maxChildSize: 0.67,
-                builder: (context, scrollController) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius:
-                          const BorderRadius.vertical(top: Radius.circular(16)),
-                      boxShadow: const [
-                        BoxShadow(color: Colors.black26, blurRadius: 6)
-                      ],
-                    ),
-                    child: SingleChildScrollView(
-                      controller: scrollController,
-                      child: Padding(
-                        padding: const EdgeInsets.all(15),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: 5,
-                              width: 40,
-                              margin: const EdgeInsets.only(top: 5, bottom: 10),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[300],
-                                borderRadius: BorderRadius.circular(10),
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 100),
+                curve: Curves.easeOut,
+                bottom: screenHeight * _sheetExtent + 20,
+                right: 20,
+                child: FloatingActionButton(
+                  heroTag: 'customer_home_fab',
+                  backgroundColor: Colors.white,
+                  elevation: 4,
+                  onPressed: () {
+                    _mapController.move(_ahmedabad, 14);
+                  },
+                  child: const Icon(Icons.my_location, color: Colors.black87),
+                ),
+              ),
+              NotificationListener<DraggableScrollableNotification>(
+                onNotification: (notification) {
+                  setState(() {
+                    _sheetExtent = notification.extent;
+                  });
+                  return true;
+                },
+                child: DraggableScrollableSheet(
+                  initialChildSize: 0.4,
+                  minChildSize: 0.05,
+                  maxChildSize: 0.67,
+                  builder: (context, scrollController) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(16)),
+                        boxShadow: const [
+                          BoxShadow(color: Colors.black26, blurRadius: 6)
+                        ],
+                      ),
+                      child: SingleChildScrollView(
+                        controller: scrollController,
+                        child: Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                height: 5,
+                                width: 40,
+                                margin:
+                                    const EdgeInsets.only(top: 5, bottom: 10),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 5),
-                            const Text(
-                              'Select Address',
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 8),
-                            const Divider(thickness: 1, color: Colors.grey),
-                            _buildTextField(
-                              hint: 'Pickup Location',
-                              prefixIcon: const Icon(
-                                Icons.gps_fixed,
-                                color: Color.fromARGB(255, 254, 187, 38),
+                              const SizedBox(height: 5),
+                              const Text(
+                                'Select Address',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
                               ),
-                              controller: pickupController,
-                            ),
-                            const SizedBox(height: 8),
-                            _buildTextField(
-                              hint: 'Dropoff Destination',
-                              prefixIcon: const Icon(
-                                Icons.location_on,
-                                color: Color.fromARGB(255, 254, 187, 38),
+                              const SizedBox(height: 8),
+                              const Divider(thickness: 1, color: Colors.grey),
+                              _buildTextField(
+                                hint: 'Pickup Location',
+                                prefixIcon: const Icon(
+                                  Icons.gps_fixed,
+                                  color: Color.fromARGB(255, 254, 187, 38),
+                                ),
+                                controller: pickupController,
                               ),
-                              controller: dropoffController,
-                            ),
-                            const SizedBox(height: 8),
-                            const Divider(thickness: 1, color: Colors.grey),
-                            ElevatedButton(
-                              onPressed: (pickupController.text.isNotEmpty &&
-                                      dropoffController.text.isNotEmpty)
-                                  ? () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => PickupPage(
-                                            pickupLocation:
-                                                pickupController.text,
-                                            dropoffLocation:
-                                                dropoffController.text,
+                              const SizedBox(height: 8),
+                              _buildTextField(
+                                hint: 'Dropoff Destination',
+                                prefixIcon: const Icon(
+                                  Icons.location_on,
+                                  color: Color.fromARGB(255, 254, 187, 38),
+                                ),
+                                controller: dropoffController,
+                              ),
+                              const SizedBox(height: 8),
+                              const Divider(thickness: 1, color: Colors.grey),
+                              ElevatedButton(
+                                onPressed: (pickupController.text.isNotEmpty &&
+                                        dropoffController.text.isNotEmpty)
+                                    ? () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => PickupPage(
+                                              pickupLocation:
+                                                  pickupController.text,
+                                              dropoffLocation:
+                                                  dropoffController.text,
+                                            ),
                                           ),
-                                        ),
-                                      );
-                                    }
-                                  : null,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    const Color.fromARGB(255, 254, 187, 38),
-                                foregroundColor: Colors.black,
-                                minimumSize: const Size.fromHeight(50),
+                                        );
+                                      }
+                                    : null,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 254, 187, 38),
+                                  foregroundColor: Colors.black,
+                                  minimumSize: const Size.fromHeight(50),
+                                ),
+                                child: const Text('Next'),
                               ),
-                              child: const Text('Next'),
-                            ),
-                            const SizedBox(height: 12),
-                            ..._addresses.map((address) => ListTile(
+                              const SizedBox(height: 12),
+                              ..._addresses.map(
+                                (address) => ListTile(
                                   dense: true,
                                   contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 16, vertical: 4),
@@ -159,13 +180,15 @@ class CustomerHomePageState extends State<CustomerHomePage> {
                                     style: const TextStyle(
                                         fontWeight: FontWeight.w500),
                                   ),
-                                )),
-                          ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ],
           ),

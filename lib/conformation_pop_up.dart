@@ -9,7 +9,7 @@ Future<void> handleConfirmResult(
     required String vehicalNo,
     required String fare}) async {
   if (!didPop) {
-    final navigator = Navigator.of(context); // cache before async
+    final navigator = Navigator.of(context);
     final shouldBook = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(

@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:autoricksaw/payment.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'cancel_ride.dart';
-import 'customer_home_page.dart';
 import 'exit_pop_up.dart';
 
 class AutoricksawBooking extends StatefulWidget {
@@ -31,12 +31,12 @@ class AutoricksawBooking extends StatefulWidget {
 class AutoricksawBookingState extends State<AutoricksawBooking> {
   final MapController _mapController = MapController();
 
-  // Example locations
-  final LatLng newlj =
-      LatLng(23.0415, 72.5171); // Newlj Institute, Pakwan Circle
-  final LatLng sabarmati = LatLng(23.0635, 72.5853); // Sabarmati
+  final LatLng newlj = LatLng(23.0415, 72.5171);
+  final LatLng sabarmati = LatLng(23.0635, 72.5853);
 
   List<LatLng> routePoints = [];
+
+  double _sheetExtent = 0.35;
 
   @override
   void initState() {
@@ -45,7 +45,6 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
   }
 
   Future<void> fetchRoute() async {
-    // Replace with your GraphHopper API Key (free tier)
     const apiKey = '34526283-cc7d-48b3-93d2-dbfb1dc461cd';
 
     final url =
@@ -62,6 +61,17 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
             .map<LatLng>((c) => LatLng(c[1] as double, c[0] as double))
             .toList();
       });
+
+      if (routePoints.isNotEmpty) {
+        final avgLat =
+            routePoints.map((p) => p.latitude).reduce((a, b) => a + b) /
+                routePoints.length;
+        final avgLng =
+            routePoints.map((p) => p.longitude).reduce((a, b) => a + b) /
+                routePoints.length;
+        final center = LatLng(avgLat, avgLng);
+        _mapController.move(center, 13);
+      }
     } else {
       log('Routing failed: ${response.body}');
     }
@@ -70,7 +80,7 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    final sheetInitialSize = 0.28; // same as draggable sheet
+    final sheetInitialSize = 0.35;
 
     return PopScope(
       canPop: false,
@@ -86,12 +96,24 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
           onConfirm: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (_) => const CustomerHomePage()),
+              MaterialPageRoute(builder: (_) => const CancelRide()),
             );
           },
         );
       },
       child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          actions: [
+            Builder(
+              builder: (context) => IconButton(
+                icon: const Icon(Icons.menu, color: Colors.black),
+                onPressed: () => Scaffold.of(context).openEndDrawer(),
+              ),
+            ),
+          ],
+        ),
         extendBodyBehindAppBar: true,
         backgroundColor: Colors.transparent,
         endDrawer: Padding(
@@ -120,8 +142,23 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                     Flexible(
                       child: TextButton(
                         onPressed: () {
-                          Navigator.of(context).push(
-                              MaterialPageRoute(builder: (_) => CancelRide()));
+                          handlePopResult(
+                            context,
+                            false,
+                            null,
+                            title: 'Cancel Ride?',
+                            message: 'Do you really want to cancel the ride?',
+                            confirmText: 'Yes',
+                            cancelText: 'No',
+                            onConfirm: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const CancelRide(),
+                                ),
+                              );
+                            },
+                          );
                         },
                         child: const Text(
                           'Cancel Ride',
@@ -142,7 +179,6 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
         ),
         body: Stack(
           children: [
-            // Fullscreen Map
             Positioned.fill(
               child: FlutterMap(
                 mapController: _mapController,
@@ -150,7 +186,7 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                   initialCenter: newlj,
                   initialZoom: 13,
                   minZoom: 12,
-                  maxZoom: 18,
+                  maxZoom: 28,
                 ),
                 children: [
                   TileLayer(
@@ -185,137 +221,157 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                 ],
               ),
             ),
-
-            // Transparent AppBar with SafeArea
-            SafeArea(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Builder(
-                      builder: (context) => IconButton(
-                        icon: const Icon(Icons.menu, color: Colors.black),
-                        onPressed: () => Scaffold.of(context).openEndDrawer(),
+            NotificationListener<DraggableScrollableNotification>(
+              onNotification: (notification) {
+                setState(() {
+                  _sheetExtent = notification.extent;
+                });
+                return true;
+              },
+              child: DraggableScrollableSheet(
+                initialChildSize: sheetInitialSize,
+                minChildSize: 0.05,
+                maxChildSize: 0.35,
+                builder: (context, scrollController) {
+                  return Container(
+                    decoration: const BoxDecoration(
+                      color: Color.fromARGB(255, 254, 187, 38),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ),
-
-            // Bottom draggable sheet
-            DraggableScrollableSheet(
-              initialChildSize: sheetInitialSize,
-              minChildSize: 0.05,
-              maxChildSize: 0.28,
-              builder: (context, scrollController) {
-                return Container(
-                  decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 254, 187, 38),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    ),
-                  ),
-                  child: ListView(
-                    controller: scrollController,
-                    padding: const EdgeInsets.symmetric(horizontal: 25),
-                    children: [
-                      const SizedBox(height: 10),
-                      Center(
-                        child: Container(
-                          height: 5,
-                          width: 40,
-                          margin: const EdgeInsets.only(top: 8, bottom: 10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
+                    child: ListView(
+                      controller: scrollController,
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      children: [
+                        const SizedBox(height: 10),
+                        Center(
+                          child: Container(
+                            height: 5,
+                            width: 40,
+                            margin: const EdgeInsets.only(top: 8, bottom: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                         ),
-                      ),
-                      const Divider(thickness: 1, color: Colors.white),
-                      const SizedBox(height: 5),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Arrive in: 10min',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16,
-                            ),
-                          ),
-                          Text(
-                            'Fare: ${widget.fare}',
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Divider(thickness: 1, color: Colors.white),
-                      const SizedBox(height: 12),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 100,
-                            width: 100,
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius: BorderRadius.circular(50),
+                        const Divider(thickness: 1, color: Colors.white),
+                        const SizedBox(height: 5),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Arrive in: 10min',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
                               ),
-                              child: const Icon(Icons.person,
-                                  size: 50, color: Colors.white),
+                            ),
+                            Text(
+                              'Fare: ${widget.fare}',
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Divider(thickness: 1, color: Colors.white),
+                        const SizedBox(height: 12),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 100,
+                              width: 100,
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                child: const Icon(Icons.person,
+                                    size: 50, color: Colors.white),
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    widget.driverName,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    widget.driverPhoneNo,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    widget.vehicalNo,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Align(
+                          alignment:
+                              Alignment.center, // or centerRight / center
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.15,
+                            height: MediaQuery.of(context).size.height * 0.05,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Payment(
+                                      fare: widget.fare,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: const Text(
+                                "Pay",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                ),
+                              ),
                             ),
                           ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  widget.driverName,
-                                  style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 16),
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  widget.driverPhoneNo,
-                                  style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 16),
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  widget.vehicalNo,
-                                  style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 16),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              },
+                        )
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
-
-            // Floating location button above sheet
-            Positioned(
-              bottom: screenHeight * sheetInitialSize + 20,
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 100),
+              curve: Curves.easeOut,
+              bottom: screenHeight * _sheetExtent + 20,
               right: 20,
               child: FloatingActionButton(
                 backgroundColor: const Color.fromARGB(255, 254, 187, 38),
