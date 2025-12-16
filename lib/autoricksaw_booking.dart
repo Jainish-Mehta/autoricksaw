@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:autoricksaw/payment.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_dragmarker/flutter_map_dragmarker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'cancel_ride.dart';
@@ -31,11 +32,11 @@ class AutoricksawBooking extends StatefulWidget {
 class AutoricksawBookingState extends State<AutoricksawBooking> {
   final MapController _mapController = MapController();
 
-  final LatLng newlj = LatLng(23.0415, 72.5171);
-  final LatLng sabarmati = LatLng(23.0635, 72.5853);
+  // ✅ make pins mutable
+  LatLng newlj = LatLng(23.0415, 72.5171);
+  LatLng sabarmati = LatLng(23.0635, 72.5853);
 
   List<LatLng> routePoints = [];
-
   double _sheetExtent = 0.35;
 
   @override
@@ -186,7 +187,7 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                   initialCenter: newlj,
                   initialZoom: 13,
                   minZoom: 12,
-                  maxZoom: 28,
+                  maxZoom: 18,
                 ),
                 children: [
                   TileLayer(
@@ -204,17 +205,27 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                         ),
                       ],
                     ),
-                  MarkerLayer(
+                  DragMarkers(
                     markers: [
-                      Marker(
+                      DragMarker(
                         point: newlj,
-                        child: const Icon(Icons.location_on,
+                        size: const Size(40, 40),
+                        builder: (_, __, ___) => const Icon(Icons.location_on,
                             color: Colors.green, size: 40),
+                        onDragEnd: (details, newPos) {
+                          setState(() => newlj = newPos);
+                          fetchRoute();
+                        },
                       ),
-                      Marker(
+                      DragMarker(
                         point: sabarmati,
-                        child: const Icon(Icons.location_on,
+                        size: const Size(40, 40),
+                        builder: (_, __, ___) => const Icon(Icons.location_on,
                             color: Colors.red, size: 40),
+                        onDragEnd: (details, newPos) {
+                          setState(() => sabarmati = newPos);
+                          fetchRoute();
+                        },
                       ),
                     ],
                   ),
