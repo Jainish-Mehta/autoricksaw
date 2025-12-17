@@ -347,12 +347,18 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                           height: 5,
                         ),
                         Align(
-                          alignment:
-                              Alignment.center, // or centerRight / center
+                          alignment: Alignment.center,
                           child: SizedBox(
                             width: MediaQuery.of(context).size.width * 0.15,
                             height: MediaQuery.of(context).size.height * 0.05,
                             child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Color.fromARGB(255, 255, 255, 255),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
                               onPressed: () {
                                 Navigator.push(
                                   context,
@@ -372,7 +378,7 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                               ),
                             ),
                           ),
-                        )
+                        ),
                       ],
                     ),
                   );

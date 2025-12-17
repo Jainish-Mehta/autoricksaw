@@ -21,7 +21,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  rename_app: ^1.6.5
+  rename_app: ^1.6.51
 
 flutter:
   uses-material-design: true
