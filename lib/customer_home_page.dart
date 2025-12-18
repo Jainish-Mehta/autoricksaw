@@ -148,11 +148,13 @@ class CustomerHomePageState extends State<CustomerHomePage> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (_) => PickupPage(
+                                            builder: (_) => PlanYourRide(
                                               pickupLocation:
                                                   pickupController.text,
                                               dropoffLocation:
                                                   dropoffController.text,
+                                              userType: 'customer',
+                                              buttonText: 'Check for Autoricksaw',
                                             ),
                                           ),
                                         );

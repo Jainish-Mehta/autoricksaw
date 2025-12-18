@@ -1,4 +1,3 @@
-// lib/widgets/app_drawer.dart
 import 'package:autoricksaw/driver_profile.dart';
 import 'package:autoricksaw/login_page.dart';
 import 'package:flutter/material.dart';
@@ -61,6 +60,15 @@ class AppDrawer extends StatelessWidget {
                   MaterialPageRoute(builder: (_) => CustomerProfile()),
                 );
               }
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.home, color: Colors.black),
+            title: Text('Wallet & Reward Points',
+                style: TextStyle(
+                    color: Colors.black, fontWeight: FontWeight.bold)),
+            onTap: () {
+              Navigator.pop(context);
             },
           ),
           ListTile(
