@@ -131,7 +131,7 @@ class _RegistrationPage extends State<RegistrationPage> {
                             await prefs.setBool('isLoggedIn', true);
                             await prefs.setString('userType', selectedItem);
                             /*  await prefs.setString(
-                                'email', _emailController.text); */ // optional
+                                'email', _emailController.text); */
 
                             Widget nextPage = selectedItem == 'Customer'
                                 ? CustomerHomePage()

@@ -32,7 +32,6 @@ class AutoricksawBooking extends StatefulWidget {
 class AutoricksawBookingState extends State<AutoricksawBooking> {
   final MapController _mapController = MapController();
 
-  // ✅ make pins mutable
   LatLng newlj = LatLng(23.0415, 72.5171);
   LatLng sabarmati = LatLng(23.0635, 72.5853);
 

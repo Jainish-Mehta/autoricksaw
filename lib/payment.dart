@@ -140,7 +140,7 @@ class PaymentState extends State<Payment> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          selectedIndex = index; // 👈 update selected card
+          selectedIndex = index;
         });
       },
       child: Container(

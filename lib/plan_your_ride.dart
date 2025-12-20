@@ -231,7 +231,11 @@ class PlanYourRideState extends State<PlanYourRide> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (_) => DriverOnline()),
+                                          builder: (_) => DriverOnline(
+                                            source: pickupController.text,
+                                            destination: dropoffController.text,
+                                          ),
+                                        ),
                                       );
                                     } else if (widget.userType.toLowerCase() ==
                                         'customer') {
