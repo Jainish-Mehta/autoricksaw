@@ -1,4 +1,4 @@
-import 'package:autoricksaw/customer_home_page.dart';
+import 'package:autoricksaw/Customer/customer_home_page.dart';
 //import 'package:autoricksaw/maps.dart';
 import 'package:flutter/material.dart';
 

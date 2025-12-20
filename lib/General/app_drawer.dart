@@ -1,9 +1,9 @@
-import 'package:autoricksaw/driver_profile.dart';
-import 'package:autoricksaw/login_page.dart';
+import 'package:autoricksaw/Driver/driver_profile.dart';
+import 'package:autoricksaw/Login&Signup/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'customer_profile.dart';
+import '../Customer/customer_profile.dart';
 
 class AppDrawer extends StatelessWidget {
   final String userType;

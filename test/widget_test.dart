@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Replace these with your actual pages
-import 'package:autoricksaw/login_page.dart';
-import 'package:autoricksaw/customer_home_page.dart';
-import 'package:autoricksaw/driver_home_page.dart';
+import 'package:autoricksaw/Login&Signup/login_page.dart';
+import 'package:autoricksaw/Customer/customer_home_page.dart';
+import 'package:autoricksaw/Driver/driver_home_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

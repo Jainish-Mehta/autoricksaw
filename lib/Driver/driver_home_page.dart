@@ -1,5 +1,5 @@
-import 'package:autoricksaw/app_drawer.dart';
-import 'package:autoricksaw/plan_your_ride.dart';
+import 'package:autoricksaw/General/app_drawer.dart';
+import 'package:autoricksaw/General/plan_your_ride.dart';
 import 'package:flutter/material.dart';
 
 class DriverHomePage extends StatefulWidget {

@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'package:autoricksaw/payment.dart';
+import 'package:autoricksaw/Payment/payment.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_dragmarker/flutter_map_dragmarker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
-import 'cancel_ride.dart';
-import 'exit_pop_up.dart';
+import '../General/cancel_ride.dart';
+import '../General/exit_pop_up.dart';
 
 class AutoricksawBooking extends StatefulWidget {
   final String cost;
