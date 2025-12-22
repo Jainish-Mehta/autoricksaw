@@ -1,4 +1,4 @@
-import 'package:autoricksaw/Payment/payment_success.dart';
+import 'package:AutoShare/Payment/payment_success.dart';
 import 'package:flutter/material.dart';
 
 class Payment extends StatefulWidget {

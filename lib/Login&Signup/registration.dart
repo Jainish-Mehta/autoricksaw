@@ -1,6 +1,6 @@
-import 'package:autoricksaw/Customer/customer_home_page.dart';
-import 'package:autoricksaw/Driver/driver_home_page.dart';
-import 'package:autoricksaw/Login&Signup/login_page.dart';
+import 'package:AutoShare/Customer/customer_home_page.dart';
+import 'package:AutoShare/Driver/driver_home_page.dart';
+import 'package:AutoShare/Login&Signup/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

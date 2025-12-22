@@ -1,4 +1,4 @@
-import 'package:autoricksaw/Customer/autoricksaw_booking.dart';
+import 'package:AutoShare/Customer/autoricksaw_booking.dart';
 import 'package:flutter/material.dart';
 
 Future<void> handleConfirmResult(

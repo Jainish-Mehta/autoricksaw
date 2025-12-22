@@ -1,5 +1,5 @@
-import 'package:autoricksaw/Customer/customer_home_page.dart';
-//import 'package:autoricksaw/maps.dart';
+import 'package:AutoShare/Customer/customer_home_page.dart';
+//import 'package:AutoShare/maps.dart';
 import 'package:flutter/material.dart';
 
 class CancelRide extends StatefulWidget {

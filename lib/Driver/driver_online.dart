@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
@@ -44,6 +45,14 @@ class DriverOnlineState extends State<DriverOnline> {
   void initState() {
     super.initState();
     fetchRoute();
+
+    Timer.periodic(const Duration(seconds: 10), (timer) {
+      if (mounted) {
+        setState(() {
+          showPopup = true;
+        });
+      }
+    });
   }
 
   Future<void> fetchRoute() async {
@@ -109,7 +118,7 @@ class DriverOnlineState extends State<DriverOnline> {
             children: [
               Container(
                 width: double.infinity,
-                height: size.height * 0.15,
+                height: 120,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
                   border: Border.all(color: Colors.black),
@@ -242,11 +251,11 @@ class DriverOnlineState extends State<DriverOnline> {
           ),
           if (showPopup)
             Positioned(
-              bottom: size.height * 0.03,
+              bottom: size.height * 0.0975,
               left: size.width * 0.1,
               right: size.width * 0.1,
               child: Container(
-                constraints: BoxConstraints(maxHeight: size.height * 0.3),
+                constraints: BoxConstraints(maxHeight: 300, maxWidth: 300),
                 decoration: BoxDecoration(
                   color: const Color.fromARGB(255, 254, 187, 38),
                   borderRadius: BorderRadius.circular(12),
@@ -255,26 +264,31 @@ class DriverOnlineState extends State<DriverOnline> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(12),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text("From: Pickup request",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.w500)),
-                            const Text("To: Your destination",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.w500)),
-                            const Text("Fare: ₹10",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.w500)),
-                            const Text("Pickup: ~2 min away",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.w500)),
-                            const SizedBox(height: 12),
-
-                            ElevatedButton(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text("From: Pickup request",
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w500)),
+                          const Text("To: Your destination",
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w500)),
+                          const Text("Fare: ₹10",
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w500)),
+                          const Text("Pickup: ~2 min away",
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w500)),
+                          const SizedBox(height: 20),
+                          Align(
+                            alignment: AlignmentGeometry.bottomCenter,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
                               onPressed: () {
                                 setState(() {
                                   showPopup = false;
@@ -290,14 +304,15 @@ class DriverOnlineState extends State<DriverOnline> {
                               child: const Text(
                                 'Accept',
                                 style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.w500),
+                                    color: Colors.black,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-
                     Positioned(
                       top: 8,
                       right: 8,
@@ -310,8 +325,8 @@ class DriverOnlineState extends State<DriverOnline> {
                   ],
                 ),
               ),
-            ),
-          Positioned(
+
+              /*Positioned(
             left: draggableFabPosition.dx,
             top: draggableFabPosition.dy,
             child: GestureDetector(
@@ -331,7 +346,8 @@ class DriverOnlineState extends State<DriverOnline> {
                 child: const Icon(Icons.drag_handle),
               ),
             ),
-          ),
+          ),*/
+            ),
         ],
       ),
     );
