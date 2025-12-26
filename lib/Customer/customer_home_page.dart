@@ -1,4 +1,4 @@
-import 'package:AutoShare/General/maps.dart';
+import 'package:autoshare/General/maps.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -26,7 +26,7 @@ class CustomerHomePageState extends State<CustomerHomePage> {
     {'name': 'Grand Hyatt Towers', 'distance': '2.3 km'},
   ];
 
-  double _sheetExtent = 0.4;
+  double _sheetExtent = 0.67;
 
   @override
   void dispose() {
@@ -64,7 +64,7 @@ class CustomerHomePageState extends State<CustomerHomePage> {
               AnimatedPositioned(
                 duration: const Duration(milliseconds: 100),
                 curve: Curves.easeOut,
-                bottom: screenHeight * _sheetExtent + 20,
+                bottom: screenHeight * _sheetExtent + 10,
                 right: 20,
                 child: FloatingActionButton(
                   heroTag: 'customer_home_fab',
@@ -84,7 +84,7 @@ class CustomerHomePageState extends State<CustomerHomePage> {
                   return true;
                 },
                 child: DraggableScrollableSheet(
-                  initialChildSize: 0.4,
+                  initialChildSize: 0.67,
                   minChildSize: 0.05,
                   maxChildSize: 0.67,
                   builder: (context, scrollController) {

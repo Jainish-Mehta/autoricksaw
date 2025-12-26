@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-// Replace these with your actual pages
-import 'package:AutoShare/Login&Signup/login_page.dart';
-import 'package:AutoShare/Customer/customer_home_page.dart';
-import 'package:AutoShare/Driver/driver_home_page.dart';
+import 'package:autoshare/Login&Signup/login_page.dart';
+import 'package:autoshare/Customer/customer_home_page.dart';
+import 'package:autoshare/Driver/driver_home_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Autorickshaw Registration',
+      title: 'AutoShare',
       theme: ThemeData(
         inputDecorationTheme: const InputDecorationTheme(
           border: OutlineInputBorder(),

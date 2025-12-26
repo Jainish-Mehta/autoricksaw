@@ -1,5 +1,5 @@
-import 'package:AutoShare/General/app_drawer.dart';
-import 'package:AutoShare/General/plan_your_ride.dart';
+import 'package:autoshare/General/app_drawer.dart';
+import 'package:autoshare/General/plan_your_ride.dart';
 import 'package:flutter/material.dart';
 
 class DriverHomePage extends StatefulWidget {

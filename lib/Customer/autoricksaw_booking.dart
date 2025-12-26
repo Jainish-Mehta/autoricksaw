@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'package:AutoShare/Payment/payment.dart';
+import 'package:autoshare/Payment/payment.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_dragmarker/flutter_map_dragmarker.dart';
@@ -36,7 +36,7 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
   LatLng sabarmati = LatLng(23.0635, 72.5853);
 
   List<LatLng> routePoints = [];
-  double _sheetExtent = 0.35;
+  double _sheetExtent = 0.37;
 
   @override
   void initState() {
@@ -80,7 +80,7 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    final sheetInitialSize = 0.35;
+    final sheetInitialSize = 0.37;
 
     return PopScope(
       canPop: false,
@@ -240,8 +240,8 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
               },
               child: DraggableScrollableSheet(
                 initialChildSize: sheetInitialSize,
-                minChildSize: 0.05,
-                maxChildSize: 0.35,
+                minChildSize: 0.045,
+                maxChildSize: 0.37,
                 builder: (context, scrollController) {
                   return Container(
                     decoration: const BoxDecoration(
@@ -343,12 +343,12 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                           ],
                         ),
                         SizedBox(
-                          height: 5,
+                          height: 20,
                         ),
                         Align(
                           alignment: Alignment.center,
                           child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.15,
+                            width: 100,
                             height: MediaQuery.of(context).size.height * 0.05,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
@@ -364,6 +364,8 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                                   MaterialPageRoute(
                                     builder: (context) => Payment(
                                       fare: widget.fare,
+                                      driverName: widget.driverName,
+                                      vehicalNo: widget.vehicalNo,
                                     ),
                                   ),
                                 );

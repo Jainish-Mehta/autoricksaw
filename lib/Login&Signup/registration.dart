@@ -1,6 +1,6 @@
-import 'package:AutoShare/Customer/customer_home_page.dart';
-import 'package:AutoShare/Driver/driver_home_page.dart';
-import 'package:AutoShare/Login&Signup/login_page.dart';
+import 'package:autoshare/Customer/customer_home_page.dart';
+import 'package:autoshare/Driver/driver_home_page.dart';
+import 'package:autoshare/Login&Signup/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -127,11 +127,37 @@ class _RegistrationPage extends State<RegistrationPage> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () async {
+                            if (_emailController.text == '') {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Please Enter Email'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                              return;
+                            } else if (_passwordController.text == '') {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Please Enter Password'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
                             final prefs = await SharedPreferences.getInstance();
                             await prefs.setBool('isLoggedIn', true);
                             await prefs.setString('userType', selectedItem);
-                            /*  await prefs.setString(
-                                'email', _emailController.text); */
+                            if (!context.mounted) return;
+                            if (selectedItem == 'Customer') {
+                              await prefs.setString(
+                                  'CustomerEmail', _emailController.text);
+                              await prefs.setString(
+                                  'CustomerPassword', _passwordController.text);
+                            } else {
+                              await prefs.setString(
+                                  'DriverEmail', _emailController.text);
+                              await prefs.setString(
+                                  'DriverPassword', _passwordController.text);
+                            }
 
                             Widget nextPage = selectedItem == 'Customer'
                                 ? CustomerHomePage()

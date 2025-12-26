@@ -1,9 +1,9 @@
-import 'package:AutoShare/Driver/driver_online.dart';
-import 'package:AutoShare/General/maps.dart';
+import 'package:autoshare/Driver/driver_online.dart';
+import 'package:autoshare/General/maps.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:AutoShare/Customer/autoricksaw_list.dart';
+import 'package:autoshare/Customer/autoricksaw_list.dart';
 
 class PlanYourRide extends StatefulWidget {
   final String pickupLocation;

@@ -1,9 +1,7 @@
-import 'package:AutoShare/Driver/driver_profile.dart';
-import 'package:AutoShare/Login&Signup/login_page.dart';
+import 'package:autoshare/Login&Signup/login_page.dart';
+import 'package:autoshare/General/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../Customer/customer_profile.dart';
 
 class AppDrawer extends StatelessWidget {
   final String userType;
@@ -51,18 +49,24 @@ class AppDrawer extends StatelessWidget {
                 if (!context.mounted) return;
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => DriverProfile()),
+                  MaterialPageRoute(
+                      builder: (_) => Profile(
+                            userType: 'Driver',
+                          )),
                 );
               } else if (userType.toLowerCase() == 'customer') {
                 if (!context.mounted) return;
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => CustomerProfile()),
+                  MaterialPageRoute(
+                      builder: (_) => Profile(
+                            userType: 'Customer',
+                          )),
                 );
               }
             },
           ),
-          ListTile(
+          /*ListTile(
             leading: Icon(Icons.home, color: Colors.black),
             title: Text('Wallet & Reward Points',
                 style: TextStyle(
@@ -70,7 +74,7 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.pop(context);
             },
-          ),
+          ),*/
           ListTile(
             leading: Icon(Icons.settings, color: Colors.black),
             title: Text('Settings',
@@ -85,7 +89,8 @@ class AppDrawer extends StatelessWidget {
                     color: Colors.black, fontWeight: FontWeight.bold)),
             onTap: () async {
               final prefs = await SharedPreferences.getInstance();
-              await prefs.clear();
+              await prefs.remove('isLoggedIn');
+
               if (!context.mounted) return;
               Navigator.pushAndRemoveUntil(
                 context,

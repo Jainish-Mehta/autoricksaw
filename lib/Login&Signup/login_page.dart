@@ -1,7 +1,7 @@
-import 'package:AutoShare/Customer/customer_home_page.dart';
-import 'package:AutoShare/Driver/driver_home_page.dart';
-import 'package:AutoShare/General/exit_pop_up.dart';
-import 'package:AutoShare/Login&Signup/registration.dart';
+import 'package:autoshare/Customer/customer_home_page.dart';
+import 'package:autoshare/Driver/driver_home_page.dart';
+import 'package:autoshare/General/exit_pop_up.dart';
+import 'package:autoshare/Login&Signup/registration.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,11 +21,6 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
     selectedRole = widget.selectedRole ?? 'customer';
   }
-
-  final String customerLoginID = 'Customer@1234';
-  final String driverLoginID = 'Driver@1234';
-  final String customerPassword = 'Customer@1234';
-  final String driverPassword = 'Driver@1234';
 
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
@@ -147,17 +142,34 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         ElevatedButton(
                           onPressed: () async {
+                            if (_controllerEmail.text == '') {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Please Enter Email'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                              return;
+                            } else if (_controllerPassword.text == '') {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Please Enter Password'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                            final prefs = await SharedPreferences.getInstance();
                             final email = _controllerEmail.text;
                             final pass = _controllerPassword.text;
 
                             if ((selectedRole == 'customer' &&
-                                    email == customerLoginID &&
-                                    pass == customerPassword) ||
+                                    email == prefs.getString('CustomerEmail') &&
+                                    pass ==
+                                        prefs.getString('CustomerPassword')) ||
                                 (selectedRole == 'driver' &&
-                                    email == driverLoginID &&
-                                    pass == driverPassword)) {
-                              final prefs =
-                                  await SharedPreferences.getInstance();
+                                    email == prefs.getString('DriverEmail') &&
+                                    pass ==
+                                        prefs.getString('DriverPassword'))) {
                               await prefs.setBool('isLoggedIn', true);
                               await prefs.setString('userType', selectedRole);
 
@@ -171,10 +183,11 @@ class _LoginPageState extends State<LoginPage> {
                                 (Route<dynamic> route) => false,
                               );
                             } else {
-                              if (!mounted) return;
+                              if (!context.mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Invalid credentials'),
+                                SnackBar(
+                                  content: Text(
+                                      'Invalid credentials'),
                                   backgroundColor: Colors.red,
                                 ),
                               );

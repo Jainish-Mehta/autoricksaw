@@ -1,11 +1,15 @@
-import 'package:AutoShare/Payment/payment_success.dart';
+import 'package:autoshare/Payment/payment_success.dart';
 import 'package:flutter/material.dart';
 
 class Payment extends StatefulWidget {
   final String fare;
+  final String driverName;
+  final String vehicalNo;
 
   const Payment({
     required this.fare,
+    required this.driverName,
+    required this.vehicalNo,
     super.key,
   });
 
@@ -37,7 +41,7 @@ class PaymentState extends State<Payment> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(top: 60),
+                  padding: EdgeInsets.only(top: 50),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -74,7 +78,7 @@ class PaymentState extends State<Payment> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
-                    padding: EdgeInsets.only(top: 40, left: 16, right: 16),
+                    padding: EdgeInsets.only(top: 35, left: 16, right: 16),
                     child: Column(
                       children: [
                         Text(
@@ -109,10 +113,14 @@ class PaymentState extends State<Payment> {
                             ),
                           ),
                           onPressed: () {
-                            Navigator.pushReplacement(
+                            Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (_) => Paymentsuccess()),
+                                builder: (_) => Paymentsuccess(
+                                  driverName: widget.driverName,
+                                  vehicalNo: widget.vehicalNo,
+                                ),
+                              ),
                             );
                           },
                           child: Text(

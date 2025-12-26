@@ -1,4 +1,4 @@
-import 'package:AutoShare/Customer/autoricksaw_booking.dart';
+import 'package:autoshare/Customer/autoricksaw_booking.dart';
 import 'package:flutter/material.dart';
 
 Future<void> handleConfirmResult(
@@ -18,11 +18,17 @@ Future<void> handleConfirmResult(
         actions: [
           TextButton(
             onPressed: () => navigator.pop(false),
-            child: const Text('Cancel'),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.black),
+            ),
           ),
           TextButton(
             onPressed: () => navigator.pop(true),
-            child: const Text('Book'),
+            child: const Text(
+              'Book',
+              style: TextStyle(color: Colors.black),
+            ),
           ),
         ],
       ),
