@@ -34,6 +34,7 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
 
   LatLng newlj = LatLng(23.0415, 72.5171);
   LatLng sabarmati = LatLng(23.0635, 72.5853);
+  LatLng driver = LatLng(23.0375, 72.515);
 
   List<LatLng> routePoints = [];
   double _sheetExtent = 0.37;
@@ -42,6 +43,11 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
   void initState() {
     super.initState();
     fetchRoute();
+  }
+
+  void setSnackBar(LatLng latLng) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(latLng.toString())));
   }
 
   Future<void> fetchRoute() async {
@@ -94,7 +100,7 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
           confirmText: 'Yes',
           cancelText: 'No',
           onConfirm: () {
-            Navigator.pushReplacement(
+            Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const CancelRide()),
             );
@@ -151,7 +157,7 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                             confirmText: 'Yes',
                             cancelText: 'No',
                             onConfirm: () {
-                              Navigator.pushReplacement(
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => const CancelRide(),
@@ -206,6 +212,18 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                     ),
                   DragMarkers(
                     markers: [
+                      DragMarker(
+                        point: driver,
+                        builder: (_, __, ___) => Image.asset(
+                          'assets/Images/Auto.png',
+                          height: 40,
+                          width: 40,
+                        ),
+                        size: const Size(40, 40),
+                        onDragEnd: (details, latLng) {
+                          setSnackBar(latLng);
+                        },
+                      ),
                       DragMarker(
                         point: newlj,
                         size: const Size(40, 40),
@@ -396,7 +414,10 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                 onPressed: () {
                   _mapController.move(newlj, 14);
                 },
-                child: const Icon(Icons.my_location),
+                child: const Icon(
+                  Icons.my_location,
+                  color: Colors.black,
+                ),
               ),
             ),
           ],

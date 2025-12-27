@@ -210,7 +210,7 @@ class DriverOnlineState extends State<DriverOnline> {
                               point: p,
                               size: const Size(40, 40),
                               builder: (_, __, ___) => const Icon(
-                                Icons.location_on,
+                                Icons.person,
                                 color: Color.fromARGB(255, 254, 187, 38),
                                 size: 40,
                               ),

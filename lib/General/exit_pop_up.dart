@@ -17,16 +17,28 @@ Future<void> handlePopResult(
     final shouldExit = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(title),
-        content: Text(message),
+        title: Text(
+          title,
+          style: TextStyle(color: Colors.black),
+        ),
+        content: Text(
+          message,
+          style: TextStyle(color: Colors.black),
+        ),
         actions: [
           TextButton(
             onPressed: () => navigator.pop(false),
-            child: Text(cancelText),
+            child: Text(
+              cancelText,
+              style: TextStyle(color: Colors.black),
+            ),
           ),
           TextButton(
             onPressed: () => navigator.pop(true),
-            child: Text(confirmText),
+            child: Text(
+              confirmText,
+              style: TextStyle(color: Colors.black),
+            ),
           ),
         ],
       ),
