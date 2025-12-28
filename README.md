@@ -1,4 +1,4 @@
-# autoricksaw
+# AutoShare - Ride More, Spend Less
 
 A new Flutter project.
 
