@@ -30,14 +30,18 @@ class AutoricksawBooking extends StatefulWidget {
 
 class AutoricksawBookingState extends State<AutoricksawBooking> {
   final MapController _mapController = MapController();
-  LatLng defaultSource = LatLng(23.088136, 72.527896);
-  LatLng defaultDestination = LatLng(23.048071, 72.515315);
-  LatLng defaultDriver = LatLng(23.040697, 72.512802);
-  LatLng newlj = LatLng(23.088136, 72.527896);
-  LatLng sabarmati = LatLng(23.048071, 72.515315);
-  LatLng driver = LatLng(23.040697, 72.512802);
+
+  LatLng defaultSource = LatLng(23.040584, 72.513227);
+  LatLng defaultDestination = LatLng(23.046187, 72.515967);
+  LatLng defaultDriver = LatLng(23.038596, 72.512236);
+
+  LatLng newlj = LatLng(23.040584, 72.513227);
+  LatLng sabarmati = LatLng(23.046187, 72.515967);
+  LatLng driver = LatLng(23.038596, 72.512236);
+
   List<LatLng> routePoints = [];
   double _sheetExtent = 0.37;
+
   @override
   void initState() {
     super.initState();
@@ -234,7 +238,7 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                       polylines: [
                         Polyline(
                           points: routePoints,
-                          color: const Color.fromARGB(255, 254, 187, 38),
+                          color: const Color.fromARGB(255, 255, 196, 0),
                           strokeWidth: 5,
                         ),
                       ],

@@ -144,8 +144,7 @@ class _RegistrationPage extends State<RegistrationPage> {
                               );
                             }
                             final prefs = await SharedPreferences.getInstance();
-                            await prefs.setBool('isLoggedIn', true);
-                            await prefs.setString('userType', selectedItem);
+
                             if (!context.mounted) return;
                             if (selectedItem == 'Customer') {
                               await prefs.setString(
@@ -168,6 +167,13 @@ class _RegistrationPage extends State<RegistrationPage> {
                               MaterialPageRoute(builder: (_) => nextPage),
                               (Route<dynamic> route) => false,
                             );
+                            await prefs.setBool('isLoggedIn', true);
+                            await prefs.setString('userType', selectedItem);
+                            /*if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(selectedItem),
+                              backgroundColor: Colors.red,
+                            ));*/
                           },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.black,

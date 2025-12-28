@@ -6,6 +6,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_dragmarker/flutter_map_dragmarker.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DriverOnline extends StatefulWidget {
   final String source;
@@ -22,17 +23,17 @@ class DriverOnline extends StatefulWidget {
 }
 
 class DriverOnlineState extends State<DriverOnline> {
+  List<LatLng> passengers = [];
+  List<LatLng> routePoints = [];
+  Offset draggableFabPosition = Offset.zero;
+  bool showPopup = false;
   final MapController _mapController = MapController();
 
-  LatLng newlj = LatLng(23.0415, 72.5171);
-  LatLng sabarmati = LatLng(23.0635, 72.5853);
-  List<LatLng> passengers = [];
+  LatLng defaultSource = LatLng(23.040584, 72.513227);
+  LatLng defaultDestination = LatLng(23.046187, 72.515967);
 
-  List<LatLng> routePoints = [];
-
-  Offset draggableFabPosition = Offset.zero;
-
-  bool showPopup = false;
+  LatLng newlj = LatLng(23.040584, 72.513227);
+  LatLng sabarmati = LatLng(23.046187, 72.515967);
 
   @override
   void didChangeDependencies() {
@@ -44,7 +45,9 @@ class DriverOnlineState extends State<DriverOnline> {
   @override
   void initState() {
     super.initState();
-    fetchRoute();
+    _loadSavedCoords().then((_) {
+      fetchRoute();
+    });
 
     Timer.periodic(const Duration(seconds: 10), (timer) {
       if (mounted) {
@@ -55,9 +58,29 @@ class DriverOnlineState extends State<DriverOnline> {
     });
   }
 
+  Future<void> _loadSavedCoords() async {
+    final prefs = await SharedPreferences.getInstance();
+    final srcLat = prefs.getDouble('source_lat');
+    final srcLng = prefs.getDouble('source_lng');
+    final destLat = prefs.getDouble('dest_lat');
+    final destLng = prefs.getDouble('dest_lng');
+    setState(() {
+      if (srcLat != null && srcLng != null) {
+        newlj = LatLng(srcLat, srcLng);
+      } else {
+        newlj = defaultSource;
+      }
+      if (destLat != null && destLng != null) {
+        sabarmati = LatLng(destLat, destLng);
+      } else {
+        sabarmati = defaultDestination;
+      }
+    });
+  }
+
   Future<void> fetchRoute() async {
     const apiKey = '34526283-cc7d-48b3-93d2-dbfb1dc461cd';
-
+    
     final points = [
       '${newlj.latitude},${newlj.longitude}',
       ...passengers.map((p) => '${p.latitude},${p.longitude}'),
@@ -66,18 +89,16 @@ class DriverOnlineState extends State<DriverOnline> {
 
     final url =
         'https://graphhopper.com/api/1/route?point=${points.join("&point=")}&vehicle=car&points_encoded=false&key=$apiKey';
-
     final response = await http.get(Uri.parse(url));
+
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final List coords = data['paths'][0]['points']['coordinates'];
-
       setState(() {
         routePoints = coords
             .map<LatLng>((c) => LatLng(c[1] as double, c[0] as double))
             .toList();
       });
-
       if (routePoints.isNotEmpty) {
         final avgLat =
             routePoints.map((p) => p.latitude).reduce((a, b) => a + b) /
@@ -86,12 +107,22 @@ class DriverOnlineState extends State<DriverOnline> {
             routePoints.map((p) => p.longitude).reduce((a, b) => a + b) /
                 routePoints.length;
         final center = LatLng(avgLat, avgLng);
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _mapController.move(center, 13);
-        });
+        _mapController.move(center, 13);
       }
     } else {
       log('Routing failed: ${response.body}');
+    }
+  }
+
+  Future<void> setCordPrefs({LatLng? source, LatLng? destination}) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (source != null) {
+      await prefs.setDouble('source_lat', source.latitude);
+      await prefs.setDouble('source_lng', source.longitude);
+    }
+    if (destination != null) {
+      await prefs.setDouble('dest_lat', destination.latitude);
+      await prefs.setDouble('dest_lng', destination.longitude);
     }
   }
 
@@ -211,7 +242,7 @@ class DriverOnlineState extends State<DriverOnline> {
                               size: const Size(40, 40),
                               builder: (_, __, ___) => const Icon(
                                 Icons.person,
-                                color: Color.fromARGB(255, 254, 187, 38),
+                                color: Color.fromARGB(255, 0, 0, 0),
                                 size: 40,
                               ),
                               onDragEnd: (details, newPos) {
@@ -227,9 +258,10 @@ class DriverOnlineState extends State<DriverOnline> {
                           size: const Size(40, 40),
                           builder: (_, __, ___) => const Icon(Icons.location_on,
                               color: Colors.green, size: 40),
-                          onDragEnd: (details, newPos) {
-                            setState(() => newlj = newPos);
+                          onDragEnd: (details, sourcePos) {
+                            setState(() => newlj = sourcePos);
                             fetchRoute();
+                            setCordPrefs(source: sourcePos);
                           },
                         ),
                         DragMarker(
@@ -237,9 +269,10 @@ class DriverOnlineState extends State<DriverOnline> {
                           size: const Size(40, 40),
                           builder: (_, __, ___) => const Icon(Icons.location_on,
                               color: Colors.red, size: 40),
-                          onDragEnd: (details, newPos) {
-                            setState(() => sabarmati = newPos);
+                          onDragEnd: (details, destinationPos) {
+                            setState(() => sabarmati = destinationPos);
                             fetchRoute();
+                            setCordPrefs(destination: destinationPos);
                           },
                         ),
                       ],
@@ -282,7 +315,7 @@ class DriverOnlineState extends State<DriverOnline> {
                                   fontSize: 18, fontWeight: FontWeight.w500)),
                           const SizedBox(height: 20),
                           Align(
-                            alignment: AlignmentGeometry.bottomCenter,
+                            alignment: Alignment.bottomCenter,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
@@ -292,12 +325,16 @@ class DriverOnlineState extends State<DriverOnline> {
                               onPressed: () {
                                 setState(() {
                                   showPopup = false;
-                                  final offset =
-                                      (passengers.length + 1) * 0.003;
-                                  passengers.add(LatLng(
-                                    newlj.latitude + offset,
-                                    newlj.longitude + offset,
-                                  ));
+                                  if (routePoints.isNotEmpty) {
+                                    final step = (routePoints.length ~/
+                                            (passengers.length + 2))
+                                        .clamp(1, routePoints.length - 1);
+                                    final index =
+                                        step * (passengers.length + 1);
+                                    if (index < routePoints.length) {
+                                      passengers.add(routePoints[index]);
+                                    }
+                                  }
                                 });
                                 fetchRoute();
                               },
@@ -325,28 +362,6 @@ class DriverOnlineState extends State<DriverOnline> {
                   ],
                 ),
               ),
-
-              /*Positioned(
-            left: draggableFabPosition.dx,
-            top: draggableFabPosition.dy,
-            child: GestureDetector(
-              onPanUpdate: (details) {
-                setState(() {
-                  draggableFabPosition += details.delta;
-                });
-              },
-              child: FloatingActionButton(
-                heroTag: 'draggableFab',
-                backgroundColor: const Color.fromARGB(255, 254, 187, 38),
-                onPressed: () {
-                  setState(() {
-                    showPopup = !showPopup;
-                  });
-                },
-                child: const Icon(Icons.drag_handle),
-              ),
-            ),
-          ),*/
             ),
         ],
       ),
