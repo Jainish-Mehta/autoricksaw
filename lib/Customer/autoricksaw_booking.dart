@@ -6,6 +6,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_dragmarker/flutter_map_dragmarker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../General/cancel_ride.dart';
 import '../General/exit_pop_up.dart';
 
@@ -15,7 +16,6 @@ class AutoricksawBooking extends StatefulWidget {
   final String driverPhoneNo;
   final String vehicalNo;
   final String fare;
-
   const AutoricksawBooking({
     required this.cost,
     required this.driverPhoneNo,
@@ -24,25 +24,47 @@ class AutoricksawBooking extends StatefulWidget {
     required this.fare,
     super.key,
   });
-
   @override
   AutoricksawBookingState createState() => AutoricksawBookingState();
 }
 
 class AutoricksawBookingState extends State<AutoricksawBooking> {
   final MapController _mapController = MapController();
-
-  LatLng newlj = LatLng(23.0415, 72.5171);
-  LatLng sabarmati = LatLng(23.0635, 72.5853);
-  LatLng driver = LatLng(23.0375, 72.515);
-
+  LatLng defaultSource = LatLng(23.088136, 72.527896);
+  LatLng defaultDestination = LatLng(23.048071, 72.515315);
+  LatLng defaultDriver = LatLng(23.040697, 72.512802);
+  LatLng newlj = LatLng(23.088136, 72.527896);
+  LatLng sabarmati = LatLng(23.048071, 72.515315);
+  LatLng driver = LatLng(23.040697, 72.512802);
   List<LatLng> routePoints = [];
   double _sheetExtent = 0.37;
-
   @override
   void initState() {
     super.initState();
-    fetchRoute();
+    _loadSavedCoords().then((_) {
+      fetchRoute();
+    });
+  }
+
+  Future<void> _loadSavedCoords() async {
+    final prefs = await SharedPreferences.getInstance();
+    final srcLat = prefs.getDouble('source_lat');
+    final srcLng = prefs.getDouble('source_lng');
+    final destLat = prefs.getDouble('dest_lat');
+    final destLng = prefs.getDouble('dest_lng');
+    setState(() {
+      if (srcLat != null && srcLng != null) {
+        newlj = LatLng(srcLat, srcLng);
+      } else {
+        newlj = defaultSource;
+      }
+      if (destLat != null && destLng != null) {
+        sabarmati = LatLng(destLat, destLng);
+      } else {
+        sabarmati = defaultDestination;
+      }
+      driver = defaultDriver;
+    });
   }
 
   void setSnackBar(LatLng latLng) {
@@ -52,22 +74,17 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
 
   Future<void> fetchRoute() async {
     const apiKey = '34526283-cc7d-48b3-93d2-dbfb1dc461cd';
-
     final url =
         'https://graphhopper.com/api/1/route?point=${newlj.latitude},${newlj.longitude}&point=${sabarmati.latitude},${sabarmati.longitude}&vehicle=car&points_encoded=false&key=$apiKey';
-
     final response = await http.get(Uri.parse(url));
-
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       final List coords = data['paths'][0]['points']['coordinates'];
-
       setState(() {
         routePoints = coords
             .map<LatLng>((c) => LatLng(c[1] as double, c[0] as double))
             .toList();
       });
-
       if (routePoints.isNotEmpty) {
         final avgLat =
             routePoints.map((p) => p.latitude).reduce((a, b) => a + b) /
@@ -80,6 +97,18 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
       }
     } else {
       log('Routing failed: ${response.body}');
+    }
+  }
+
+  Future<void> setCordPrefs({LatLng? source, LatLng? destination}) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (source != null) {
+      await prefs.setDouble('source_lat', source.latitude);
+      await prefs.setDouble('source_lng', source.longitude);
+    }
+    if (destination != null) {
+      await prefs.setDouble('dest_lat', destination.latitude);
+      await prefs.setDouble('dest_lng', destination.longitude);
     }
   }
 
@@ -221,7 +250,6 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                         ),
                         size: const Size(40, 40),
                         onDragEnd: (details, latLng) {
-                          setSnackBar(latLng);
                         },
                       ),
                       DragMarker(
@@ -229,9 +257,10 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                         size: const Size(40, 40),
                         builder: (_, __, ___) => const Icon(Icons.location_on,
                             color: Colors.green, size: 40),
-                        onDragEnd: (details, newPos) {
-                          setState(() => newlj = newPos);
+                        onDragEnd: (details, sourcePos) {
+                          setState(() => newlj = sourcePos);
                           fetchRoute();
+                          setCordPrefs(source: sourcePos);
                         },
                       ),
                       DragMarker(
@@ -239,9 +268,10 @@ class AutoricksawBookingState extends State<AutoricksawBooking> {
                         size: const Size(40, 40),
                         builder: (_, __, ___) => const Icon(Icons.location_on,
                             color: Colors.red, size: 40),
-                        onDragEnd: (details, newPos) {
-                          setState(() => sabarmati = newPos);
+                        onDragEnd: (details, destinationPos) {
+                          setState(() => sabarmati = destinationPos);
                           fetchRoute();
+                          setCordPrefs(destination: destinationPos);
                         },
                       ),
                     ],
