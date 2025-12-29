@@ -301,10 +301,10 @@ class DriverOnlineState extends State<DriverOnline> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text("From: Pickup request",
+                          const Text("From: Thaltej",
                               style: TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.w500)),
-                          const Text("To: Your destination",
+                          const Text("To: Gota",
                               style: TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.w500)),
                           const Text("Fare: ₹10",
