@@ -10,6 +10,7 @@ class PlanYourRide extends StatefulWidget {
   final String dropoffLocation;
   final String userType;
   final String buttonText;
+  final String distance;
 
   const PlanYourRide({
     super.key,
@@ -17,6 +18,7 @@ class PlanYourRide extends StatefulWidget {
     required this.dropoffLocation,
     required this.userType,
     required this.buttonText,
+    required this.distance
   });
 
   @override
@@ -147,14 +149,14 @@ class PlanYourRideState extends State<PlanYourRide> {
                           const SizedBox(height: 5),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
+                            children:  [
                               Text(
-                                'Distance',
+                                '',
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                               Text(
-                                '1.2km',
+                                '${widget.distance}',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,

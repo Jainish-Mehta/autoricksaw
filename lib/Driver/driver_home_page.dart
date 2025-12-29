@@ -69,6 +69,7 @@ class DriverHomePageState extends State<DriverHomePage> {
                                 dropoffLocation: '',
                                 userType: 'driver',
                                 buttonText: 'Go for Ride',
+                                distance:'',
                               ),
                             ),
                           );

@@ -14,9 +14,9 @@ class AhmedabadMap extends StatelessWidget {
       mapController: mapController,
       options: MapOptions(
         initialCenter: ahmedabad,
-        initialZoom: 14,
+        initialZoom: 13,
         minZoom: 12,
-        maxZoom: 16,
+        maxZoom: 18,
       ),
       children: [
         TileLayer(

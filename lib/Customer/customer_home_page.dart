@@ -21,9 +21,9 @@ class CustomerHomePageState extends State<CustomerHomePage> {
   final TextEditingController dropoffController = TextEditingController();
 
   final List<Map<String, String>> _addresses = [
-    {'name': 'Irani Restaurant', 'distance': '1.2 km'},
-    {'name': 'Bus Stop', 'distance': '0.8 km'},
-    {'name': 'Grand Hyatt Towers', 'distance': '2.3 km'},
+    {'name': 'Irani Restaurant', 'distance': ''},
+    {'name': 'Bus Stop', 'distance': ''},
+    {'name': 'Grand Hyatt Towers', 'distance': ''},
   ];
 
   double _sheetExtent = 0.67;
@@ -155,6 +155,7 @@ class CustomerHomePageState extends State<CustomerHomePage> {
                                                   dropoffController.text,
                                               userType: 'customer',
                                               buttonText: 'Check for Autoricksaw',
+                                              distance: 'Distance - 1.2km',
                                             ),
                                           ),
                                         );
